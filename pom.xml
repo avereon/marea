@@ -48,6 +48,9 @@
 		<!-- Version numbers updated 20 Mar 2022 -->
 		<!-- Runtime dependencies -->
 		<curve.version>[0.3-SNAPSHOT,)</curve.version>
+		<zevra.version>[0.8-SNAPSHOT,)</zevra.version>
+		<openjfx.version>17.0.2</openjfx.version>
+		<testfx.version>[4.0,)</testfx.version>
 	</properties>
 
 	<dependencies>
@@ -56,6 +59,51 @@
 			<groupId>com.avereon</groupId>
 			<artifactId>curve</artifactId>
 			<version>${curve.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.avereon</groupId>
+			<artifactId>zevra</artifactId>
+			<version>${zevra.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>${openjfx.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.testfx</groupId>
+			<artifactId>testfx-core</artifactId>
+			<version>${testfx.version}</version>
+			<scope>provided</scope>
+			<exclusions>
+				<!-- Exclude the openjfx libraries, they are already available -->
+				<exclusion>
+					<groupId>org.openjfx</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.testfx</groupId>
+			<artifactId>testfx-junit5</artifactId>
+			<version>${testfx.version}</version>
+			<scope>compile</scope>
+			<exclusions>
+				<!-- Exclude the junit-jupiter-api, it is already available-->
+				<exclusion>
+					<groupId>org.junit.jupiter</groupId>
+					<artifactId>junit-jupiter-api</artifactId>
+				</exclusion>
+				<!-- Exclude the openjfx libraries, they are already available -->
+				<exclusion>
+					<groupId>org.openjfx</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 	</dependencies>
@@ -68,7 +116,7 @@
 				<!-- This configuration allows the JUnit test runner to find the unit tests -->
 				<configuration>
 					<argLine>
-						--add-opens=com.avereon.zevra/com.avereon.marea=ALL-UNNAMED
+						--add-opens=com.avereon.marea/com.avereon.marea=ALL-UNNAMED
 					</argLine>
 				</configuration>
 			</plugin>
