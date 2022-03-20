@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.avereon.pom</groupId>
+		<artifactId>jar</artifactId>
+		<version>3.3.3</version>
+	</parent>
+
+	<groupId>com.avereon</groupId>
+	<artifactId>marea</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>Marea</name>
+	<description>2D/3D rendering library</description>
+	<inceptionYear>2022</inceptionYear>
+
+	<developers>
+		<developer>
+			<name>Mark Soderquist</name>
+			<email>mark@soderquist.net</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<repositories>
+		<repository>
+			<id>avn</id>
+			<url>https://repo.avereon.com/avn</url>
+		</repository>
+	</repositories>
+
+	<properties>
+		<product-name>${project.name}</product-name>
+		<product-identifier>${project.artifactId}</product-identifier>
+		<project-timestamp>${maven.build.timestamp}</project-timestamp>
+
+		<!-- Keep consistent with the CI pipeline -->
+		<java.version>17</java.version>
+
+		<!-- Version numbers updated 20 Mar 2022 -->
+		<!-- Runtime dependencies -->
+		<curve.version>[0.3-SNAPSHOT,)</curve.version>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.avereon</groupId>
+			<artifactId>curve</artifactId>
+			<version>${curve.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<!-- This configuration allows the JUnit test runner to find the unit tests -->
+				<configuration>
+					<argLine>
+						--add-opens=com.avereon.zevra/com.avereon.marea=ALL-UNNAMED
+					</argLine>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<failOnError>false</failOnError>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
+
