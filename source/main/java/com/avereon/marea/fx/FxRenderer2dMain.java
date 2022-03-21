@@ -8,12 +8,11 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-public class FxRendererMain extends Application {
+public class FxRenderer2dMain extends Application {
 
 	@Override
 	public void start( Stage stage ) throws Exception {
-		FxRenderer renderer = new FxRenderer();
-		renderer.resize( 200, 200 );
+		FxRenderer2d renderer = new FxRenderer2d( 200, 200 );
 		renderer.setOutputScale( Screen.getPrimary().getOutputScaleX(), Screen.getPrimary().getOutputScaleY() );
 		renderer.drawHRule( 10.5, Color.YELLOW, 1 );
 		renderer.drawHRule( renderer.getHeight() - 10.5, Color.YELLOW, 1 );
