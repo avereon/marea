@@ -35,9 +35,9 @@ public class FxRenderer2dMain extends Application {
 		renderer.drawVRule( renderer.getWidth() - 10.5, Color.YELLOW, 1 );
 
 		// Draw an arrow pointing up
-		renderer.draw( new Line( Point.of( 0, -1 ), Point.of( 0, 1 ) ), Color.GREEN, 1.0 / dpi );
-		renderer.draw( new Line( Point.of( -1, 0 ), Point.of( 0, 1 ) ), Color.GREEN, 1.0 / dpi );
-		renderer.draw( new Line( Point.of( 1, 0 ), Point.of( 0, 1 ) ), Color.GREEN, 1.0 / dpi );
+		renderer.draw( new Line( Point.of( 0, -1 ), Point.of( 0, 1 ) ), Color.GREEN, 0.1 );
+		renderer.draw( new Line( Point.of( -1, 0 ), Point.of( 0, 1 ) ), Color.GREEN, 0.1 );
+		renderer.draw( new Line( Point.of( 1, 0 ), Point.of( 0, 1 ) ), Color.GREEN, 0.1 );
 	}
 
 }
