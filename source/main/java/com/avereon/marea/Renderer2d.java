@@ -4,6 +4,10 @@ import javafx.scene.paint.Paint;
 
 public interface Renderer2d {
 
+	void setDpi( double dpiX, double dpiY );
+
+	void setViewpoint( double x, double y );
+
 	void setOutputScale( double scaleX, double scaleY );
 
 	void drawHRule( double position, Paint paint, double width );
