@@ -9,7 +9,9 @@ import javafx.scene.transform.Transform;
 //@CustomLog
 public class FxRenderer extends Canvas implements Renderer {
 
-	private Affine screenTransform;
+	private final Affine screenTransform = new Affine();
+
+	private Affine worldTransform = new Affine();
 
 	public FxRenderer() {
 		setOutputScale( 1, 1 );
@@ -19,7 +21,7 @@ public class FxRenderer extends Canvas implements Renderer {
 	public void setOutputScale( double scaleX, double scaleY ) {
 		Affine affine = new Affine();
 		affine.append( Transform.scale( 1 / scaleX, 1 / scaleX ) );
-		screenTransform = affine;
+		worldTransform = affine;
 	}
 
 	@Override
@@ -39,8 +41,6 @@ public class FxRenderer extends Canvas implements Renderer {
 		screenSetup( paint, width );
 		getGraphicsContext2D().strokeLine( position, 0, position, getHeight() );
 	}
-
-
 
 	private void screenSetup( Paint paint, double width ) {
 		// set transform to screen
