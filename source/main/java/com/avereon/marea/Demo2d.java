@@ -39,10 +39,11 @@ public class Demo2d extends Application {
 
 		stage.show();
 
-		renderer.drawHRule( 10.5, Color.YELLOW, 1 );
-		renderer.drawHRule( renderer.getHeight() - 10.5, Color.YELLOW, 1 );
-		renderer.drawVRule( 10.5, Color.YELLOW, 1 );
-		renderer.drawVRule( renderer.getWidth() - 10.5, Color.YELLOW, 1 );
+		Pen outlinePen = new Pen( Color.YELLOW, 1 );
+		renderer.drawHRule( 10.5, outlinePen );
+		renderer.drawHRule( renderer.getHeight() - 10.5, outlinePen );
+		renderer.drawVRule( 10.5, outlinePen );
+		renderer.drawVRule( renderer.getWidth() - 10.5, outlinePen );
 
 		//		// Draw an arrow pointing up
 		//		renderer.draw( new Line( Point.of( 0, -1 ), Point.of( 0, 1 ) ), Color.GREEN, 0.1 );
@@ -50,19 +51,24 @@ public class Demo2d extends Application {
 		//		renderer.draw( new Line( Point.of( 1, 0 ), Point.of( 0, 1 ) ), Color.GREEN, 0.1 );
 
 		// Draw an airfoil with line segments
-		loadAirfoilLines().forEach( l -> renderer.draw( l, Color.BLACK, 0.01 ) );
+		loadAirfoilLines().forEach( l -> renderer.draw( l, new Pen( 0.01 ) ) );
+
+		Pen orangePen = new Pen( Color.ORANGE, 0.01 );
+		Pen yellowPen = new Pen( Color.YELLOW, 0.01 );
+		Pen goldenPen = new Pen( Color.GOLDENROD, 0.01 );
+		Pen brownPen = new Pen( Color.BROWN, 0.01 );
 
 		// Draw checks
-		renderer.draw( new Line( -0.6, -0.1, -0.4, 0.1 ), Color.ORANGE, 0.01 );
-		renderer.draw( new Ellipse( -0.5, 0.5, 0.1, 0.1 ), Color.YELLOW, 0.01 );
-		renderer.draw( new Ellipse( -0.5, 0.5, 0.1, 0.05, 30 ), Color.ORANGE, 0.01 );
-		renderer.draw( new Arc( 0, 0.5, 0.1, 0.1, 0, 0, 135 ), Color.ORANGE, 0.01 );
-		renderer.draw( new Text( "Joukowsky", 0.4, 0.4, 0.2, -10 ), Color.ORANGE, 0.01 );
+		renderer.draw( new Line( -0.6, -0.1, -0.4, 0.1 ), orangePen );
+		renderer.draw( new Ellipse( -0.5, 0.5, 0.1, 0.1 ), yellowPen );
+		renderer.draw( new Ellipse( -0.5, 0.5, 0.1, 0.05, 30 ), orangePen );
+		renderer.draw( new Arc( 0, 0.5, 0.1, 0.1, 0, 0, 135 ), orangePen );
+		renderer.draw( new Text( "Joukowsky", 0.4, 0.4, 0.2, -10 ), orangePen );
 
 		// Fill checks
-		renderer.fill( new Ellipse( -0.5, -0.4, 0.1, 0.1 ), Color.GOLDENROD );
-		renderer.fill( new Ellipse( -0.5, -0.4, 0.05, 0.1, -120 ), Color.BROWN );
-		renderer.fill( new Text( "Joukowsky", 0.4, -0.5, 0.2, 10 ), Color.BROWN );
+		renderer.fill( new Ellipse( -0.5, -0.4, 0.1, 0.1 ), goldenPen );
+		renderer.fill( new Ellipse( -0.5, -0.4, 0.05, 0.1, -120 ), brownPen );
+		renderer.fill( new Text( "Joukowsky", 0.4, -0.5, 0.2, 10 ), brownPen );
 	}
 
 	private List<Line> loadAirfoilLines() throws IOException {

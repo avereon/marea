@@ -1,7 +1,5 @@
 package com.avereon.marea;
 
-import javafx.scene.paint.Paint;
-
 public interface Renderer2d {
 
 	void setDpi( double dpiX, double dpiY );
@@ -10,12 +8,12 @@ public interface Renderer2d {
 
 	void setViewpoint( double x, double y );
 
-	void drawHRule( double position, Paint paint, double width );
+	void drawHRule( double position, Pen pen );
 
-	void drawVRule( double position, Paint paint, double width );
+	void drawVRule( double position, Pen pen );
 
-	void draw( Shape2d shape, Paint paint, double width );
+	void draw( Shape2d shape, Pen pen );
 
-	void fill( Shape2d shape, Paint paint );
+	void fill( Shape2d shape, Pen pen );
 
 }

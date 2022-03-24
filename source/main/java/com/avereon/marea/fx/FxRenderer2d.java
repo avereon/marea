@@ -2,19 +2,21 @@ package com.avereon.marea.fx;
 
 import com.avereon.curve.math.Point;
 import com.avereon.curve.math.Vector;
-import com.avereon.marea.Renderer2d;
-import com.avereon.marea.Shape2d;
+import com.avereon.marea.*;
 import com.avereon.marea.geom.Arc;
 import com.avereon.marea.geom.Ellipse;
 import com.avereon.marea.geom.Line;
 import com.avereon.marea.geom.Text;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcType;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 import lombok.CustomLog;
+
+import java.util.Arrays;
 
 @CustomLog
 public class FxRenderer2d extends Canvas implements Renderer2d {
@@ -66,57 +68,62 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	@Override
-	public void drawHRule( double position, Paint paint, double width ) {
-		screenSetup( paint, width );
+	public void drawHRule( double position, Pen pen ) {
+		screenSetup();
+		getGraphicsContext2D().setStroke( pen.paint() );
+		getGraphicsContext2D().setLineWidth( pen.width() );
 		getGraphicsContext2D().strokeLine( 0, position, getWidth(), position );
 	}
 
 	@Override
-	public void drawVRule( double position, Paint paint, double width ) {
-		screenSetup( paint, width );
+	public void drawVRule( double position, Pen pen ) {
+		screenSetup();
+		getGraphicsContext2D().setStroke( pen.paint() );
+		getGraphicsContext2D().setLineWidth( pen.width() );
 		getGraphicsContext2D().strokeLine( position, 0, position, getHeight() );
 	}
 
 	@Override
-	public void draw( Shape2d shape, Paint paint, double width ) {
+	public void draw( Shape2d shape, Pen pen ) {
+		setPen( pen );
 		switch( shape.type() ) {
-			case ARC -> drawArc( (Arc)shape, paint, width );
-			case LINE -> drawLine( (Line)shape, paint, width );
-			case ELLIPSE -> drawEllipse( (Ellipse)shape, paint, width );
-			case TEXT -> drawText( (Text)shape, paint, width );
+			case ARC -> drawArc( (Arc)shape );
+			case LINE -> drawLine( (Line)shape );
+			case ELLIPSE -> drawEllipse( (Ellipse)shape );
+			case TEXT -> drawText( (Text)shape );
 		}
 	}
 
-	private void drawArc( Arc arc, Paint paint, double width ) {
+	private void drawArc( Arc arc ) {
 		double[] anchor = Vector.add( arc.getAnchor(), Point.of( -arc.getRadius()[ 0 ], -arc.getRadius()[ 1 ] ) );
 		double[] radius = Vector.scale( arc.getRadius(), 2 );
 
-		worldSetup( arc, paint, width );
+		worldSetup( arc );
 		getGraphicsContext2D().strokeArc( anchor[ 0 ], anchor[ 1 ], radius[ 0 ], radius[ 1 ], arc.getStart(), -arc.getExtent(), ArcType.OPEN );
 	}
 
-	private void drawEllipse( Ellipse ellipse, Paint paint, double width ) {
+	private void drawEllipse( Ellipse ellipse ) {
 		double[] anchor = Vector.add( ellipse.getAnchor(), Point.of( -ellipse.getRadius()[ 0 ], -ellipse.getRadius()[ 1 ] ) );
 		double[] radius = Vector.scale( ellipse.getRadius(), 2 );
 
-		worldSetup( ellipse, paint, width );
+		worldSetup( ellipse );
 		getGraphicsContext2D().strokeOval( anchor[ 0 ], anchor[ 1 ], radius[ 0 ], radius[ 1 ] );
 	}
 
-	private void drawLine( Line line, Paint paint, double width ) {
+	private void drawLine( Line line ) {
 		double[] anchor = line.getAnchor();
 		double[] vector = line.getVector();
 
-		worldSetup( line, paint, width );
+		worldSetup( line );
 		getGraphicsContext2D().strokeLine( anchor[ 0 ], anchor[ 1 ], vector[ 0 ], vector[ 1 ] );
 	}
 
-	private void drawText( Text text, Paint paint, double width ) {
+	private void drawText( Text text ) {
 		double[] anchor = text.getAnchor();
 
+		scalePen( FONT_POINT_SIZE );
+
 		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -text.getRotate(), Vector.scale( anchor, FONT_POINT_SIZE, -FONT_POINT_SIZE ) ) );
-		getGraphicsContext2D().setStroke( paint );
-		getGraphicsContext2D().setLineWidth( width * FONT_POINT_SIZE );
 		//getGraphicsContext2D().setTextBaseline( VPos.BASELINE );
 		getGraphicsContext2D().setFont( new Font( text.getHeight() * FONT_POINT_SIZE ) );
 		getGraphicsContext2D().strokeText( text.getText(), anchor[ 0 ] * FONT_POINT_SIZE, -anchor[ 1 ] * FONT_POINT_SIZE );
@@ -126,36 +133,53 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	@Override
-	public void fill( Shape2d shape, Paint paint ) {
+	public void fill( Shape2d shape, Pen pen ) {
+		setPen( pen );
 		switch( shape.type() ) {
 			case LINE -> {
 				// Lines cannot be filled
 			}
-			case ELLIPSE -> fillEllipse( (Ellipse)shape, paint );
-			case TEXT -> fillText( (Text)shape, paint );
+			case ELLIPSE -> fillEllipse( (Ellipse)shape );
+			case TEXT -> fillText( (Text)shape );
 		}
 	}
 
-	private void fillEllipse( Ellipse ellipse, Paint paint ) {
+	private void fillEllipse( Ellipse ellipse ) {
 		double[] anchor = Vector.add( ellipse.getAnchor(), Point.of( -ellipse.getRadius()[ 0 ], -ellipse.getRadius()[ 1 ] ) );
 		double[] radius = Vector.scale( ellipse.getRadius(), 2 );
 
-		worldSetup( ellipse, paint, 0.0 );
-		getGraphicsContext2D().setFill( paint );
+		worldSetup( ellipse );
 		getGraphicsContext2D().fillOval( anchor[ 0 ], anchor[ 1 ], radius[ 0 ], radius[ 1 ] );
 	}
 
-	private void fillText( Text text, Paint paint ) {
+	private void fillText( Text text ) {
 		double[] anchor = text.getAnchor();
 
+		scalePen( FONT_POINT_SIZE );
+
 		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -text.getRotate(), Vector.scale( anchor, FONT_POINT_SIZE, -FONT_POINT_SIZE ) ) );
-		getGraphicsContext2D().setFill( paint );
 		//getGraphicsContext2D().setTextBaseline( VPos.BASELINE );
 		getGraphicsContext2D().setFont( new Font( text.getHeight() * FONT_POINT_SIZE ) );
 		getGraphicsContext2D().fillText( text.getText(), anchor[ 0 ] * FONT_POINT_SIZE, -anchor[ 1 ] * FONT_POINT_SIZE );
 
 		// A reference line at the beginning of the text
 		//getGraphicsContext2D().strokeLine( anchor[ 0 ] * FONT_POINT_SIZE, -anchor[ 1 ] * FONT_POINT_SIZE, anchor[ 0 ] * FONT_POINT_SIZE, (-anchor[ 1 ] - text.getHeight()) * FONT_POINT_SIZE );
+	}
+
+	private void setPen( Pen pen ) {
+		getGraphicsContext2D().setFill( pen.paint() );
+		getGraphicsContext2D().setStroke( pen.paint() );
+		getGraphicsContext2D().setLineWidth( pen.width() );
+		getGraphicsContext2D().setLineCap( getCap( pen.cap() ) );
+		getGraphicsContext2D().setLineJoin( getJoin( pen.join() ) );
+		getGraphicsContext2D().setLineDashes( pen.dashes() );
+		getGraphicsContext2D().setLineDashOffset( pen.offset() );
+	}
+
+	private void scalePen( double scale ) {
+		getGraphicsContext2D().setLineWidth( getGraphicsContext2D().getLineWidth() * scale );
+		if( getGraphicsContext2D().getLineDashes() != null ) getGraphicsContext2D().setLineDashes( Arrays.stream( getGraphicsContext2D().getLineDashes() ).map( d -> d * scale ).toArray() );
+		getGraphicsContext2D().setLineDashOffset( getGraphicsContext2D().getLineDashOffset() * scale );
 	}
 
 	private void updateWorldTransforms() {
@@ -212,22 +236,30 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		return affine;
 	}
 
-	private void screenSetup( Paint paint, double width ) {
+	private void screenSetup() {
 		// set transform to screen
 		getGraphicsContext2D().setTransform( screenTransform );
-		// set paint
-		getGraphicsContext2D().setStroke( paint );
-		// set width
-		getGraphicsContext2D().setLineWidth( width );
 	}
 
-	private void worldSetup( Shape2d shape, Paint paint, double width ) {
+	private void worldSetup( Shape2d shape ) {
 		// set transform to screen
 		getGraphicsContext2D().setTransform( rotate( worldTransform, shape.getRotate(), shape.getAnchor() ) );
-		// set paint
-		getGraphicsContext2D().setStroke( paint );
-		// set width
-		getGraphicsContext2D().setLineWidth( width );
+	}
+
+	private StrokeLineCap getCap( LineCap cap ) {
+		return switch( cap ) {
+			case SQUARE -> StrokeLineCap.SQUARE;
+			case BUTT -> StrokeLineCap.BUTT;
+			default -> StrokeLineCap.ROUND;
+		};
+	}
+
+	private StrokeLineJoin getJoin( LineJoin join ) {
+		return switch( join ) {
+			case BEVEL -> StrokeLineJoin.BEVEL;
+			case MITER -> StrokeLineJoin.MITER;
+			default -> StrokeLineJoin.ROUND;
+		};
 	}
 
 }
