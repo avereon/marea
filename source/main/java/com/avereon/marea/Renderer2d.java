@@ -6,9 +6,9 @@ public interface Renderer2d {
 
 	void setDpi( double dpiX, double dpiY );
 
-	void setViewpoint( double x, double y );
+	void setZoom( double scaleX, double scaleY );
 
-	void setOutputScale( double scaleX, double scaleY );
+	void setViewpoint( double x, double y );
 
 	void drawHRule( double position, Paint paint, double width );
 

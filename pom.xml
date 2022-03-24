@@ -48,7 +48,7 @@
 		<!-- Version numbers updated 20 Mar 2022 -->
 		<!-- Runtime dependencies -->
 		<curve.version>[0.3-SNAPSHOT,)</curve.version>
-		<zevra.version>[0.8-SNAPSHOT,)</zevra.version>
+		<zarra.version>[0.8-SNAPSHOT,)</zarra.version>
 		<openjfx.version>17.0.2</openjfx.version>
 		<testfx.version>[4.0,)</testfx.version>
 	</properties>
@@ -63,8 +63,8 @@
 
 		<dependency>
 			<groupId>com.avereon</groupId>
-			<artifactId>zevra</artifactId>
-			<version>${zevra.version}</version>
+			<artifactId>zarra</artifactId>
+			<version>${zarra.version}</version>
 		</dependency>
 
 		<dependency>
@@ -104,6 +104,12 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.avereon</groupId>
+			<artifactId>zarra</artifactId>
+			<version>0.8-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 
 	</dependencies>
