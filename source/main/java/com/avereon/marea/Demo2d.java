@@ -1,10 +1,8 @@
 package com.avereon.marea;
 
+import com.avereon.curve.math.Point;
 import com.avereon.marea.fx.FxRenderer2d;
-import com.avereon.marea.geom.Arc;
-import com.avereon.marea.geom.Ellipse;
-import com.avereon.marea.geom.Line;
-import com.avereon.marea.geom.Text;
+import com.avereon.marea.geom.*;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -64,6 +62,7 @@ public class Demo2d extends Application {
 		renderer.draw( new Ellipse( -0.5, 0.5, 0.1, 0.05, 30 ), orangePen );
 		renderer.draw( new Arc( 0, 0.5, 0.1, 0.1, 0, 0, 135 ), orangePen );
 		renderer.draw( new Text( "Joukowsky", 0.4, 0.4, 0.2, -10 ), orangePen );
+		renderer.draw( new Curve( Point.of( 0.9, 0.4 ), Point.of( 0.9, 0.6 ), Point.of( 1.1, 0.4 ), Point.of( 1.1, 0.6 ) ), orangePen );
 
 		// Fill checks
 		renderer.fill( new Ellipse( -0.5, -0.4, 0.1, 0.1 ), goldenPen );

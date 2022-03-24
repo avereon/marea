@@ -3,10 +3,7 @@ package com.avereon.marea.fx;
 import com.avereon.curve.math.Point;
 import com.avereon.curve.math.Vector;
 import com.avereon.marea.*;
-import com.avereon.marea.geom.Arc;
-import com.avereon.marea.geom.Ellipse;
-import com.avereon.marea.geom.Line;
-import com.avereon.marea.geom.Text;
+import com.avereon.marea.geom.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.StrokeLineCap;
@@ -88,6 +85,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		setPen( pen );
 		switch( shape.type() ) {
 			case ARC -> drawArc( (Arc)shape );
+			case CURVE -> drawCurve( (Curve)shape );
 			case LINE -> drawLine( (Line)shape );
 			case ELLIPSE -> drawEllipse( (Ellipse)shape );
 			case TEXT -> drawText( (Text)shape );
@@ -116,6 +114,18 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 		worldSetup( line );
 		getGraphicsContext2D().strokeLine( anchor[ 0 ], anchor[ 1 ], vector[ 0 ], vector[ 1 ] );
+	}
+
+	private void drawCurve( Curve curve ) {
+		double[] a = curve.getAnchor();
+		double[] b = curve.getAnchorControl();
+		double[] c = curve.getVectorControl();
+		double[] d = curve.getVector();
+
+		worldSetup( curve );
+		getGraphicsContext2D().moveTo( a[ 0 ], a[ 1 ] );
+		getGraphicsContext2D().bezierCurveTo( b[ 0 ], b[ 1 ], c[ 0 ], c[ 1 ], d[ 0 ], d[ 1 ] );
+		getGraphicsContext2D().stroke();
 	}
 
 	private void drawText( Text text ) {
