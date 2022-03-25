@@ -12,16 +12,14 @@ import lombok.RequiredArgsConstructor;
  */
 @Data
 @RequiredArgsConstructor
-public class Curve implements Shape2d, Shape3d {
+public class Quad implements Shape2d, Shape3d {
 
 	/**
 	 * The anchor point.
 	 */
 	private final double[] anchor;
 
-	private final double[] anchorControl;
-
-	private final double[] vectorControl;
+	private final double[] control;
 
 	/**
 	 * The vector point.
@@ -30,17 +28,17 @@ public class Curve implements Shape2d, Shape3d {
 
 	private final double rotate;
 
-	public Curve( double ax, double ay, double bx, double by, double cx, double cy, double dx, double dy ) {
-		this( Point.of( ax, ay ), Point.of( bx, by ), Point.of( cx, cy ), Point.of( dx, dy ) );
+	public Quad( double ax, double ay, double bx, double by, double cx, double cy ) {
+		this( Point.of( ax,ay), Point.of( bx,by), Point.of( cx,cy ) );
 	}
 
-	public Curve( double[] anchor, double[] anchorControl, double[] vectorControl, double[] vector ) {
-		this( anchor, anchorControl, vectorControl, vector, 0.0 );
+	public Quad( double[] anchor, double[] control, double[] vector ) {
+		this( anchor, control, vector, 0.0 );
 	}
 
 	@Override
 	public ShapeType type() {
-		return ShapeType.CURVE;
+		return ShapeType.QUAD;
 	}
 
 }

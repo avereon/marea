@@ -88,6 +88,8 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 			case CURVE -> drawCurve( (Curve)shape );
 			case LINE -> drawLine( (Line)shape );
 			case ELLIPSE -> drawEllipse( (Ellipse)shape );
+			case PATH -> drawPath( (Path)shape );
+			case QUAD -> drawQuad( (Quad)shape );
 			case TEXT -> drawText( (Text)shape );
 		}
 	}
@@ -123,8 +125,27 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		double[] d = curve.getVector();
 
 		worldSetup( curve );
+		getGraphicsContext2D().beginPath();
 		getGraphicsContext2D().moveTo( a[ 0 ], a[ 1 ] );
 		getGraphicsContext2D().bezierCurveTo( b[ 0 ], b[ 1 ], c[ 0 ], c[ 1 ], d[ 0 ], d[ 1 ] );
+		getGraphicsContext2D().stroke();
+	}
+
+	private void drawQuad( Quad quad ) {
+		double[] a = quad.getAnchor();
+		double[] b = quad.getControl();
+		double[] c = quad.getVector();
+
+		worldSetup( quad );
+		getGraphicsContext2D().beginPath();
+		getGraphicsContext2D().moveTo( a[ 0 ], a[ 1 ] );
+		getGraphicsContext2D().quadraticCurveTo( b[ 0 ], b[ 1 ], c[ 0 ], c[ 1 ] );
+		getGraphicsContext2D().stroke();
+	}
+
+	private void drawPath( Path path ) {
+		worldSetup( path );
+		runPath( path );
 		getGraphicsContext2D().stroke();
 	}
 
@@ -146,10 +167,8 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	public void fill( Shape2d shape, Pen pen ) {
 		setPen( pen );
 		switch( shape.type() ) {
-			case LINE -> {
-				// Lines cannot be filled
-			}
 			case ELLIPSE -> fillEllipse( (Ellipse)shape );
+			case PATH -> fillPath( (Path)shape );
 			case TEXT -> fillText( (Text)shape );
 		}
 	}
@@ -160,6 +179,12 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 		worldSetup( ellipse );
 		getGraphicsContext2D().fillOval( anchor[ 0 ], anchor[ 1 ], radius[ 0 ], radius[ 1 ] );
+	}
+
+	private void fillPath( Path path ) {
+		worldSetup( path );
+		runPath( path );
+		getGraphicsContext2D().fill();
 	}
 
 	private void fillText( Text text ) {
@@ -254,6 +279,21 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	private void worldSetup( Shape2d shape ) {
 		// set transform to screen
 		getGraphicsContext2D().setTransform( rotate( worldTransform, shape.getRotate(), shape.getAnchor() ) );
+	}
+
+	private void runPath( Path path ) {
+		double[] a = path.getAnchor();
+		getGraphicsContext2D().beginPath();
+		getGraphicsContext2D().moveTo( a[ 0 ], a[ 1 ] );
+		path.getElements().forEach( e -> {
+			double[] data = e.getData();
+			switch( e.getType() ) {
+				case LINE -> getGraphicsContext2D().lineTo( data[ 0 ], data[ 1 ] );
+				case ARC -> getGraphicsContext2D().arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+				case QUAD -> getGraphicsContext2D().quadraticCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
+				case CURVE -> getGraphicsContext2D().bezierCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+			}
+		} );
 	}
 
 	private StrokeLineCap getCap( LineCap cap ) {
