@@ -22,7 +22,7 @@ public class Pen {
 	private double offset = 0.0;
 
 	public Pen( Paint paint ) {
-		this(paint, 1.0 );
+		this( paint, 1.0 );
 	}
 
 	public Pen( double width ) {

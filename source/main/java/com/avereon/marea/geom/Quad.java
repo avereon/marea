@@ -29,7 +29,7 @@ public class Quad implements Shape2d, Shape3d {
 	private final double rotate;
 
 	public Quad( double ax, double ay, double bx, double by, double cx, double cy ) {
-		this( Point.of( ax,ay), Point.of( bx,by), Point.of( cx,cy ) );
+		this( Point.of( ax, ay ), Point.of( bx, by ), Point.of( cx, cy ) );
 	}
 
 	public Quad( double[] anchor, double[] control, double[] vector ) {
