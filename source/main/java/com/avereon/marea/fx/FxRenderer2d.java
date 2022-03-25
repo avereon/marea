@@ -153,14 +153,9 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		double[] anchor = text.getAnchor();
 
 		scalePen( FONT_POINT_SIZE );
-
 		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -text.getRotate(), Vector.scale( anchor, FONT_POINT_SIZE, -FONT_POINT_SIZE ) ) );
-		//getGraphicsContext2D().setTextBaseline( VPos.BASELINE );
 		getGraphicsContext2D().setFont( new Font( text.getHeight() * FONT_POINT_SIZE ) );
 		getGraphicsContext2D().strokeText( text.getText(), anchor[ 0 ] * FONT_POINT_SIZE, -anchor[ 1 ] * FONT_POINT_SIZE );
-
-		// A reference line at the beginning of the text
-		//getGraphicsContext2D().strokeLine( anchor[ 0 ] * FONT_POINT_SIZE, -anchor[ 1 ] * FONT_POINT_SIZE, anchor[ 0 ] * FONT_POINT_SIZE, (-anchor[ 1 ] - text.getHeight()) * FONT_POINT_SIZE );
 	}
 
 	@Override
@@ -191,14 +186,9 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		double[] anchor = text.getAnchor();
 
 		scalePen( FONT_POINT_SIZE );
-
 		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -text.getRotate(), Vector.scale( anchor, FONT_POINT_SIZE, -FONT_POINT_SIZE ) ) );
-		//getGraphicsContext2D().setTextBaseline( VPos.BASELINE );
 		getGraphicsContext2D().setFont( new Font( text.getHeight() * FONT_POINT_SIZE ) );
 		getGraphicsContext2D().fillText( text.getText(), anchor[ 0 ] * FONT_POINT_SIZE, -anchor[ 1 ] * FONT_POINT_SIZE );
-
-		// A reference line at the beginning of the text
-		//getGraphicsContext2D().strokeLine( anchor[ 0 ] * FONT_POINT_SIZE, -anchor[ 1 ] * FONT_POINT_SIZE, anchor[ 0 ] * FONT_POINT_SIZE, (-anchor[ 1 ] - text.getHeight()) * FONT_POINT_SIZE );
 	}
 
 	private void setPen( Pen pen ) {
