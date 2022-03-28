@@ -2,6 +2,12 @@ package com.avereon.marea;
 
 public interface Renderer2d {
 
+	double getWidth();
+
+	double getHeight();
+
+	void reset();
+
 	void setDpi( double dpiX, double dpiY );
 
 	void setZoom( double scaleX, double scaleY );

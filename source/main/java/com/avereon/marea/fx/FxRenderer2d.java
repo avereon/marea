@@ -47,6 +47,12 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	@Override
+	public void reset() {
+		getGraphicsContext2D().setTransform( screenTransform );
+		getGraphicsContext2D().clearRect( 0,0, getWidth(),getHeight() );
+	}
+
+	@Override
 	public void setDpi( double dpiX, double dpiY ) {
 		dpi = new double[]{ dpiX, dpiY };
 		updateWorldTransforms();

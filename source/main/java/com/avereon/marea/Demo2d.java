@@ -3,6 +3,7 @@ package com.avereon.marea;
 import com.avereon.curve.math.Point;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.*;
+import com.avereon.zarra.javafx.Fx;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -34,8 +35,59 @@ public class Demo2d extends Application {
 		Parent container = new BorderPane( renderer );
 		Scene scene = (new Scene( container, Color.NAVY ));
 		stage.setScene( scene );
-
 		stage.show();
+
+		//Fx.run( () -> this.staticRender( renderer ) );
+		Thread runner = new Thread(()->this.dynamicRender( renderer ));
+		runner.setDaemon( true );
+		runner.start();
+	}
+
+	private void dynamicRender( Renderer2d renderer ) {
+		long counter = 10;
+
+		Pen outlinePen = new Pen( Color.YELLOW, 1 );
+		renderer.drawHRule( 10.5, outlinePen );
+		try {
+			Thread.sleep( 1000 );
+		} catch( InterruptedException e ) {
+			e.printStackTrace();
+		}
+		renderer.drawHRule( renderer.getHeight() - 10.5, outlinePen );
+		try {
+			Thread.sleep( 1000 );
+		} catch( InterruptedException e ) {
+			e.printStackTrace();
+		}
+		renderer.drawVRule( 10.5, outlinePen );
+		try {
+			Thread.sleep( 1000 );
+		} catch( InterruptedException e ) {
+			e.printStackTrace();
+		}
+		renderer.drawVRule( renderer.getWidth() - 10.5, outlinePen );
+
+		long width = (long)renderer.getWidth();
+		Pen pen = new Pen( Color.YELLOW );
+		while( true ) {
+			//System.out.println( "counter="+counter);
+			long step = counter % width;
+			Fx.run( () -> {
+				renderer.reset();
+				//renderer.draw( new Line( step, 100, step, 200 ), pen );
+				renderer.drawVRule( step, outlinePen );
+			} );
+			counter++;
+			try {
+				Thread.sleep( 1 );
+			} catch( InterruptedException e ) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void staticRender( Renderer2d renderer ) {
+		renderer.reset();
 
 		Pen outlinePen = new Pen( Color.YELLOW, 1 );
 		renderer.drawHRule( 10.5, outlinePen );
@@ -53,7 +105,11 @@ public class Demo2d extends Application {
 
 		// Draw the airfoil with a path
 		Path airfoil = new Path( 1, 0 );
-		loadAirfoilLines().forEach( l -> airfoil.line( l.getVector() ) );
+		try {
+			loadAirfoilLines().forEach( l -> airfoil.line( l.getVector() ) );
+		} catch( IOException e ) {
+			e.printStackTrace();
+		}
 		renderer.draw( airfoil, new Pen( Color.CYAN, 0.01 ) );
 
 		Pen orangePen = new Pen( Color.ORANGE, 0.01 );
