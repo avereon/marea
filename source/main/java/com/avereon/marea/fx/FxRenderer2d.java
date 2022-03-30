@@ -47,7 +47,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	@Override
-	public void reset() {
+	public void clear() {
 		getGraphicsContext2D().setTransform( screenTransform );
 		getGraphicsContext2D().clearRect( 0,0, getWidth(),getHeight() );
 	}

@@ -3,7 +3,7 @@ package com.avereon.marea;
 import com.avereon.curve.math.Point;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.*;
-import com.avereon.zarra.javafx.Fx;
+import com.avereon.util.ThreadUtil;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -38,7 +38,7 @@ public class Demo2d extends Application {
 		stage.show();
 
 		//Fx.run( () -> this.staticRender( renderer ) );
-		Thread runner = new Thread(()->this.dynamicRender( renderer ));
+		Thread runner = new Thread( () -> this.dynamicRender( renderer ) );
 		runner.setDaemon( true );
 		runner.start();
 	}
@@ -47,47 +47,60 @@ public class Demo2d extends Application {
 		long counter = 10;
 
 		Pen outlinePen = new Pen( Color.YELLOW, 1 );
-		renderer.drawHRule( 10.5, outlinePen );
-		try {
-			Thread.sleep( 1000 );
-		} catch( InterruptedException e ) {
-			e.printStackTrace();
-		}
-		renderer.drawHRule( renderer.getHeight() - 10.5, outlinePen );
-		try {
-			Thread.sleep( 1000 );
-		} catch( InterruptedException e ) {
-			e.printStackTrace();
-		}
-		renderer.drawVRule( 10.5, outlinePen );
-		try {
-			Thread.sleep( 1000 );
-		} catch( InterruptedException e ) {
-			e.printStackTrace();
-		}
-		renderer.drawVRule( renderer.getWidth() - 10.5, outlinePen );
+		//		renderer.drawHRule( 10.5, outlinePen );
+		//		try {
+		//			Thread.sleep( 100 );
+		//		} catch( InterruptedException e ) {
+		//			e.printStackTrace();
+		//		}
+		//		renderer.drawHRule( renderer.getHeight() - 10.5, outlinePen );
+		//		try {
+		//			Thread.sleep( 100 );
+		//		} catch( InterruptedException e ) {
+		//			e.printStackTrace();
+		//		}
+		//		renderer.drawVRule( 10.5, outlinePen );
+		//		try {
+		//			Thread.sleep( 100 );
+		//		} catch( InterruptedException e ) {
+		//			e.printStackTrace();
+		//		}
+		//		renderer.drawVRule( renderer.getWidth() - 10.5, outlinePen );
 
-		long width = (long)renderer.getWidth();
+		int width = (int)renderer.getWidth();
 		Pen pen = new Pen( Color.YELLOW );
+
+		int count = (width / 3);
 		while( true ) {
-			//System.out.println( "counter="+counter);
-			long step = counter % width;
-			Fx.run( () -> {
-				renderer.reset();
-				//renderer.draw( new Line( step, 100, step, 200 ), pen );
-				renderer.drawVRule( step, outlinePen );
-			} );
-			counter++;
-			try {
-				Thread.sleep( 1 );
-			} catch( InterruptedException e ) {
-				e.printStackTrace();
+			for( int index = 0; index < 3; index++ ) {
+				renderer.clear();
+				for( int colIndex = 0; colIndex < count; colIndex++ ) {
+					renderer.drawVRule( 6 * colIndex + 2*index, pen );
+				}
+				ThreadUtil.pause( 1000 / 30 );
 			}
 		}
+
+		//		while( true ) {
+		//			//System.out.println( "counter="+counter);
+		//			long step = counter % width;
+		//			Fx.run( () -> {
+		//				renderer.reset();
+		//				//renderer.draw( new Line( step, 100, step, 200 ), pen );
+		//
+		//				renderer.drawVRule( step, pen );
+		//			} );
+		//			counter++;
+		//			try {
+		//				Thread.sleep( 1000 / 60 );
+		//			} catch( InterruptedException e ) {
+		//				e.printStackTrace();
+		//			}
+		//		}
 	}
 
 	private void staticRender( Renderer2d renderer ) {
-		renderer.reset();
+		renderer.clear();
 
 		Pen outlinePen = new Pen( Color.YELLOW, 1 );
 		renderer.drawHRule( 10.5, outlinePen );
