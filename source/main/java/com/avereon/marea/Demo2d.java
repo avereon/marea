@@ -3,7 +3,6 @@ package com.avereon.marea;
 import com.avereon.curve.math.Point;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.*;
-import com.avereon.util.ThreadUtil;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -19,6 +18,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Demo2d extends Application {
 
@@ -44,59 +44,58 @@ public class Demo2d extends Application {
 	}
 
 	private void dynamicRender( Renderer2d renderer ) {
+		long start = System.nanoTime();
 		long counter = 10;
 
-		Pen outlinePen = new Pen( Color.YELLOW, 1 );
-		//		renderer.drawHRule( 10.5, outlinePen );
-		//		try {
-		//			Thread.sleep( 100 );
-		//		} catch( InterruptedException e ) {
-		//			e.printStackTrace();
-		//		}
-		//		renderer.drawHRule( renderer.getHeight() - 10.5, outlinePen );
-		//		try {
-		//			Thread.sleep( 100 );
-		//		} catch( InterruptedException e ) {
-		//			e.printStackTrace();
-		//		}
-		//		renderer.drawVRule( 10.5, outlinePen );
-		//		try {
-		//			Thread.sleep( 100 );
-		//		} catch( InterruptedException e ) {
-		//			e.printStackTrace();
-		//		}
-		//		renderer.drawVRule( renderer.getWidth() - 10.5, outlinePen );
-
+		Random random = new Random();
 		int width = (int)renderer.getWidth();
+		int height = (int)renderer.getHeight();
 		Pen pen = new Pen( Color.YELLOW );
 
-		int count = (width / 3);
-		while( true ) {
-			for( int index = 0; index < 3; index++ ) {
-				renderer.clear();
-				for( int colIndex = 0; colIndex < count; colIndex++ ) {
-					renderer.drawVRule( 6 * colIndex + 2*index, pen );
-				}
-				ThreadUtil.pause( 1000 / 30 );
-			}
-		}
-
-		//		while( true ) {
-		//			//System.out.println( "counter="+counter);
-		//			long step = counter % width;
-		//			Fx.run( () -> {
-		//				renderer.reset();
-		//				//renderer.draw( new Line( step, 100, step, 200 ), pen );
-		//
-		//				renderer.drawVRule( step, pen );
-		//			} );
-		//			counter++;
-		//			try {
-		//				Thread.sleep( 1000 / 60 );
-		//			} catch( InterruptedException e ) {
-		//				e.printStackTrace();
+		// Random lines
+		//		for( int index = 0; index < 1000000; index++ ) {
+		//			//renderer.clear();
+		//			boolean even = index % 2 == 0;
+		//			if( even ) {
+		//				renderer.drawHRule( random.nextInt( height ), pen );
+		//			} else {
+		//				renderer.drawVRule( random.nextInt( width ), pen );
 		//			}
 		//		}
+
+		// Scrolling lines
+		//		int count = (width / 3);
+		//		while( true ) {
+		//			for( int index = 0; index < 3; index++ ) {
+		//				renderer.clear();
+		//				for( int colIndex = 0; colIndex < count; colIndex++ ) {
+		//					renderer.drawVRule( 6 * colIndex + 2*index, pen );
+		//				}
+		//				ThreadUtil.pause( 1000 / 30 );
+		//			}
+		//		}
+
+		// Scrolling line
+		//				while( true ) {
+		//					//System.out.println( "counter="+counter);
+		//					long step = counter % width;
+		//					Fx.run( () -> {
+		//						renderer.clear();
+		//						//renderer.draw( new Line( step, 100, step, 200 ), pen );
+		//
+		//						renderer.drawVRule( step, pen );
+		//					} );
+		//					counter++;
+		//					try {
+		//						Thread.sleep( 1000 / 60 );
+		//					} catch( InterruptedException e ) {
+		//						e.printStackTrace();
+		//					}
+		//				}
+
+		long end = System.nanoTime();
+
+		System.out.println( "duration=" + (end - start) + " nanos" );
 	}
 
 	private void staticRender( Renderer2d renderer ) {
