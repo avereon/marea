@@ -45,6 +45,53 @@ public class Demo2d extends Application {
 //		runner.start();
 	}
 
+	private void staticRender( Renderer2d renderer ) {
+		renderer.clear();
+
+		Pen outlinePen = new Pen( Color.YELLOW, 1 );
+		renderer.drawHRule( 10.5, outlinePen );
+		renderer.drawHRule( renderer.getHeight() - 10.5, outlinePen );
+		renderer.drawVRule( 10.5, outlinePen );
+		renderer.drawVRule( renderer.getWidth() - 10.5, outlinePen );
+
+		//		// Draw an arrow pointing up
+		//		renderer.draw( new Line( Point.of( 0, -1 ), Point.of( 0, 1 ) ), Color.GREEN, 0.1 );
+		//		renderer.draw( new Line( Point.of( -1, 0 ), Point.of( 0, 1 ) ), Color.GREEN, 0.1 );
+		//		renderer.draw( new Line( Point.of( 1, 0 ), Point.of( 0, 1 ) ), Color.GREEN, 0.1 );
+
+		// Draw an airfoil with line segments
+		//loadAirfoilLines().forEach( l -> renderer.draw( l, new Pen( 0.01 ) ) );
+
+		// Draw the airfoil with a path
+		Path airfoil = new Path( 1, 0 );
+		try {
+			loadAirfoilLines().forEach( l -> airfoil.line( l.getVector() ) );
+		} catch( IOException e ) {
+			e.printStackTrace();
+		}
+
+		Pen orangePen = new Pen( Color.ORANGE, 0.01 );
+		Pen yellowPen = new Pen( Color.YELLOW, 0.01 );
+		Pen goldenPen = new Pen( Color.GOLDENROD, 0.01 );
+		Pen brownPen = new Pen( Color.BROWN, 0.01 );
+
+		// Draw checks
+		renderer.draw( new Line( -0.6, -0.1, -0.4, 0.1 ), orangePen );
+		renderer.draw( new Ellipse( -0.5, 0.5, 0.1, 0.1 ), yellowPen );
+		renderer.draw( new Ellipse( -0.5, 0.5, 0.1, 0.05, 30 ), orangePen );
+		renderer.draw( new Arc( 0, 0.5, 0.1, 0.1, 0, 0, 135 ), orangePen );
+		renderer.draw( new Text( "Joukowsky", 0.4, 0.4, 0.2, -10 ), orangePen );
+		renderer.draw( new Curve( Point.of( 0.9, 0.4 ), Point.of( 0.9, 0.6 ), Point.of( 1.1, 0.4 ), Point.of( 1.1, 0.6 ) ), orangePen );
+		renderer.draw( new Quad( 1.4, 0.4, 1.5, 0.6, 1.6, 0.4 ), orangePen );
+		renderer.draw( airfoil, new Pen( Color.CYAN, 0.01 ) );
+
+		// Fill checks
+		renderer.fill( new Ellipse( -0.5, -0.4, 0.1, 0.1 ), goldenPen );
+		renderer.fill( new Ellipse( -0.5, -0.4, 0.05, 0.1, -120 ), brownPen );
+		renderer.fill( new Text( "Joukowsky", 0.4, -0.5, 0.2, 10 ), brownPen );
+		renderer.fill( airfoil, new Pen( Color.BLACK ) );
+	}
+
 	private void dynamicRender( Renderer2d renderer ) {
 		long start = System.nanoTime();
 		long counter = 10;
@@ -98,53 +145,6 @@ public class Demo2d extends Application {
 		//		long end = System.nanoTime();
 		//
 		//		System.out.println( "duration=" + (end - start) + " nanos" );
-	}
-
-	private void staticRender( Renderer2d renderer ) {
-		renderer.clear();
-
-		Pen outlinePen = new Pen( Color.YELLOW, 1 );
-		renderer.drawHRule( 10.5, outlinePen );
-		renderer.drawHRule( renderer.getHeight() - 10.5, outlinePen );
-		renderer.drawVRule( 10.5, outlinePen );
-		renderer.drawVRule( renderer.getWidth() - 10.5, outlinePen );
-
-		//		// Draw an arrow pointing up
-		//		renderer.draw( new Line( Point.of( 0, -1 ), Point.of( 0, 1 ) ), Color.GREEN, 0.1 );
-		//		renderer.draw( new Line( Point.of( -1, 0 ), Point.of( 0, 1 ) ), Color.GREEN, 0.1 );
-		//		renderer.draw( new Line( Point.of( 1, 0 ), Point.of( 0, 1 ) ), Color.GREEN, 0.1 );
-
-		// Draw an airfoil with line segments
-		//loadAirfoilLines().forEach( l -> renderer.draw( l, new Pen( 0.01 ) ) );
-
-		// Draw the airfoil with a path
-		Path airfoil = new Path( 1, 0 );
-		try {
-			loadAirfoilLines().forEach( l -> airfoil.line( l.getVector() ) );
-		} catch( IOException e ) {
-			e.printStackTrace();
-		}
-		renderer.draw( airfoil, new Pen( Color.CYAN, 0.01 ) );
-
-		Pen orangePen = new Pen( Color.ORANGE, 0.01 );
-		Pen yellowPen = new Pen( Color.YELLOW, 0.01 );
-		Pen goldenPen = new Pen( Color.GOLDENROD, 0.01 );
-		Pen brownPen = new Pen( Color.BROWN, 0.01 );
-
-		// Draw checks
-		renderer.draw( new Line( -0.6, -0.1, -0.4, 0.1 ), orangePen );
-		renderer.draw( new Ellipse( -0.5, 0.5, 0.1, 0.1 ), yellowPen );
-		renderer.draw( new Ellipse( -0.5, 0.5, 0.1, 0.05, 30 ), orangePen );
-		renderer.draw( new Arc( 0, 0.5, 0.1, 0.1, 0, 0, 135 ), orangePen );
-		renderer.draw( new Text( "Joukowsky", 0.4, 0.4, 0.2, -10 ), orangePen );
-		renderer.draw( new Curve( Point.of( 0.9, 0.4 ), Point.of( 0.9, 0.6 ), Point.of( 1.1, 0.4 ), Point.of( 1.1, 0.6 ) ), orangePen );
-		renderer.draw( new Quad( 1.4, 0.4, 1.5, 0.6, 1.6, 0.4 ), orangePen );
-
-		// Fill checks
-		renderer.fill( new Ellipse( -0.5, -0.4, 0.1, 0.1 ), goldenPen );
-		renderer.fill( new Ellipse( -0.5, -0.4, 0.05, 0.1, -120 ), brownPen );
-		renderer.fill( new Text( "Joukowsky", 0.4, -0.5, 0.2, 10 ), brownPen );
-		renderer.fill( airfoil, new Pen( Color.BLACK ) );
 	}
 
 	private List<Line> loadAirfoilLines() throws IOException {
