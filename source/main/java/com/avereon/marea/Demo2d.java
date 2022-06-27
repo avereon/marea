@@ -3,6 +3,7 @@ package com.avereon.marea;
 import com.avereon.curve.math.Point;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.*;
+import com.avereon.zarra.javafx.Fx;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -38,6 +39,7 @@ public class Demo2d extends Application {
 		stage.show();
 
 		//Fx.run( () -> this.staticRender( renderer ) );
+
 		Thread runner = new Thread( () -> this.dynamicRender( renderer ) );
 		runner.setDaemon( true );
 		runner.start();
@@ -76,26 +78,26 @@ public class Demo2d extends Application {
 		//		}
 
 		// Scrolling line
-		//				while( true ) {
-		//					//System.out.println( "counter="+counter);
-		//					long step = counter % width;
-		//					Fx.run( () -> {
-		//						renderer.clear();
-		//						//renderer.draw( new Line( step, 100, step, 200 ), pen );
+		while( true ) {
+			//System.out.println( "counter="+counter);
+			long step = counter % width;
+			Fx.run( () -> {
+				renderer.clear();
+				//renderer.draw( new Line( step, 100, step, 200 ), pen );
+
+				renderer.drawVRule( step, pen );
+			} );
+			counter++;
+			try {
+				Thread.sleep( 1000 / 60 );
+			} catch( InterruptedException e ) {
+				e.printStackTrace();
+			}
+		}
+
+		//		long end = System.nanoTime();
 		//
-		//						renderer.drawVRule( step, pen );
-		//					} );
-		//					counter++;
-		//					try {
-		//						Thread.sleep( 1000 / 60 );
-		//					} catch( InterruptedException e ) {
-		//						e.printStackTrace();
-		//					}
-		//				}
-
-		long end = System.nanoTime();
-
-		System.out.println( "duration=" + (end - start) + " nanos" );
+		//		System.out.println( "duration=" + (end - start) + " nanos" );
 	}
 
 	private void staticRender( Renderer2d renderer ) {
