@@ -38,11 +38,11 @@ public class Demo2d extends Application {
 		stage.setScene( scene );
 		stage.show();
 
-		//Fx.run( () -> this.staticRender( renderer ) );
+		Fx.run( () -> this.staticRender( renderer ) );
 
-		Thread runner = new Thread( () -> this.dynamicRender( renderer ) );
-		runner.setDaemon( true );
-		runner.start();
+//		Thread runner = new Thread( () -> this.dynamicRender( renderer ) );
+//		runner.setDaemon( true );
+//		runner.start();
 	}
 
 	private void dynamicRender( Renderer2d renderer ) {

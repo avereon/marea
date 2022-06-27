@@ -20,11 +20,11 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	/**
 	 * This value needs to be large enough to allow small font heights to be
-	 * rendered correctly. This is done by choosing a value that ensure the small
-	 * font height multiplied by the FONT_POINT_SIZE to be greater than 1.0. This
+	 * rendered correctly. This is done by choosing a value that ensures small
+	 * font heights multiplied by the FONT_POINT_SIZE is greater than 1.0. This
 	 * is because the font engine does not allow font sizes smaller than 1.0. A
-	 * value between 1e2 and 1e6 recommended. The font engine also does not like
-	 * really large values.
+	 * value between 1e2 and 1e6 is recommended. The font engine also does not
+	 * like really large values.
 	 */
 	private static final double FONT_POINT_SIZE = 1e4;
 
@@ -49,7 +49,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	@Override
 	public void clear() {
 		getGraphicsContext2D().setTransform( screenTransform );
-		getGraphicsContext2D().clearRect( 0,0, getWidth(),getHeight() );
+		getGraphicsContext2D().clearRect( 0, 0, getWidth(), getHeight() );
 	}
 
 	@Override
@@ -214,11 +214,11 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	private void updateWorldTransforms() {
-		updateWorldTransform();
-		updateWorldTextTransform();
+		worldTextTransform = updateWorldTextTransform();
+		worldTransform = updateWorldTransform();
 	}
 
-	private void updateWorldTransform() {
+	private Affine updateWorldTransform() {
 		Affine affine = new Affine();
 
 		// Center the origin
@@ -236,28 +236,27 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		// Center the viewpoint. The viewpoint is given in world coordinates
 		affine.append( Transform.translate( -viewpoint[ 0 ], -viewpoint[ 1 ] ) );
 
-		worldTransform = affine;
+		return affine;
 	}
 
-	private void updateWorldTextTransform() {
+	private Affine updateWorldTextTransform() {
 		Affine affine = new Affine();
 
 		// Center the origin
 		affine.append( Transform.translate( 0.5 * getWidth(), 0.5 * getHeight() ) );
 
 		// Do NOT invert the y-axis
-		//textAffine.append( Transform.scale( 1.0, 1.0 ) );
 
 		// Scale for screen DPI
 		affine.append( Transform.scale( dpi[ 0 ], dpi[ 1 ] ) );
 
-		//		// Apply the zoom factor
+		// Apply the zoom factor
 		affine.append( Transform.scale( zoom[ 0 ] / FONT_POINT_SIZE, zoom[ 1 ] / FONT_POINT_SIZE ) );
 
 		// Center the viewpoint. The viewpoint is given in world coordinates
 		affine.append( Transform.translate( -viewpoint[ 0 ] * FONT_POINT_SIZE, viewpoint[ 1 ] * FONT_POINT_SIZE ) );
 
-		worldTextTransform = affine;
+		return affine;
 	}
 
 	private Affine rotate( Affine transform, double rotate, double[] anchor ) {
