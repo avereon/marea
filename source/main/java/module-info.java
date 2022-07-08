@@ -24,5 +24,6 @@ module com.avereon.marea {
 	opens com.avereon.marea to javafx.graphics;
 	exports com.avereon.marea.geom;
 	opens com.avereon.marea.geom to javafx.graphics;
+	exports com.avereon.marea.fx;
 
 }
