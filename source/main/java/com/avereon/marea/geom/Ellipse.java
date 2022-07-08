@@ -32,8 +32,8 @@ public class Ellipse implements Shape2d, Shape3d {
 		this( anchor, radius, 0.0 );
 	}
 
-	public Ellipse( double x1, double y1, double x2, double y2 ) {
-		this( Point.of( x1, y1 ), Point.of( x2, y2 ) );
+	public Ellipse( double cx, double cy, double rx, double ry ) {
+		this( Point.of( cx, cy ), Point.of( rx, ry ) );
 	}
 
 	public Ellipse( double x1, double y1, double x2, double y2, double rotate ) {
