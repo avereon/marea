@@ -40,14 +40,28 @@ public class Demo2d extends Application {
 
 		Fx.run( () -> this.staticRender( renderer ) );
 
-//		Thread runner = new Thread( () -> this.dynamicRender( renderer ) );
-//		runner.setDaemon( true );
-//		runner.start();
+		Thread runner = new Thread( () -> {
+			long counter = 0;
+			while( true ) {
+				long finalCounter = counter;
+				Fx.run( () -> {
+					renderer.clear();
+					dynamicRender( renderer, finalCounter );
+					staticRender( renderer );
+				} );
+				counter++;
+				try {
+					Thread.sleep( 10 );
+				} catch( InterruptedException e ) {
+					e.printStackTrace();
+				}
+			}
+		} );
+		runner.setDaemon( true );
+		runner.start();
 	}
 
 	private void staticRender( Renderer2d renderer ) {
-		renderer.clear();
-
 		Pen outlinePen = new Pen( Color.YELLOW, 1 );
 		renderer.drawHRule( 10.5, outlinePen );
 		renderer.drawHRule( renderer.getHeight() - 10.5, outlinePen );
@@ -92,9 +106,8 @@ public class Demo2d extends Application {
 		renderer.fill( airfoil, new Pen( Color.BLACK ) );
 	}
 
-	private void dynamicRender( Renderer2d renderer ) {
+	private void dynamicRender( Renderer2d renderer, long counter ) {
 		long start = System.nanoTime();
-		long counter = 10;
 
 		Random random = new Random();
 		int width = (int)renderer.getWidth();
@@ -125,22 +138,7 @@ public class Demo2d extends Application {
 		//		}
 
 		// Scrolling line
-		while( true ) {
-			//System.out.println( "counter="+counter);
-			long step = counter % width;
-			Fx.run( () -> {
-				renderer.clear();
-				//renderer.draw( new Line( step, 100, step, 200 ), pen );
-
-				renderer.drawVRule( step, pen );
-			} );
-			counter++;
-			try {
-				Thread.sleep( 1000 / 60 );
-			} catch( InterruptedException e ) {
-				e.printStackTrace();
-			}
-		}
+		renderer.drawVRule( counter % width, pen );
 
 		//		long end = System.nanoTime();
 		//

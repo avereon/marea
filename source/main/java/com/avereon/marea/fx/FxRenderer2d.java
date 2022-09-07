@@ -41,9 +41,9 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	private double[] zoom = new double[]{ 1, 1 };
 
 	public FxRenderer2d( double width, double height ) {
+		super( width, height );
 		widthProperty().addListener( ( p, o, n ) -> updateWorldTransforms() );
 		heightProperty().addListener( ( p, o, n ) -> updateWorldTransforms() );
-		resize( width, height );
 	}
 
 	@Override
