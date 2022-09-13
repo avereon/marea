@@ -22,9 +22,9 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	 * This value needs to be large enough to allow small font heights to be
 	 * rendered correctly. This is done by choosing a value that ensures small
 	 * font heights multiplied by the FONT_POINT_SIZE is greater than 1.0. This
-	 * is because the font engine does not allow font sizes smaller than 1.0. A
-	 * value between 1e2 and 1e6 is recommended. The font engine also does not
-	 * like really large values.
+	 * is because the font engine does not allow font sizes smaller than 1.0. The
+	 * font engine does not like really large values either. A value between 1e2
+	 * and 1e6 is recommended.
 	 */
 	private static final double FONT_POINT_SIZE = 1e4;
 
