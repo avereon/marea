@@ -20,8 +20,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Demo2d extends Application {
+
+	long FREQ_60_HZ = 1000 / 60;
 
 	@Override
 	public void start( Stage stage ) throws Exception {
@@ -38,20 +41,18 @@ public class Demo2d extends Application {
 		stage.setScene( scene );
 		stage.show();
 
-		Fx.run( () -> this.staticRender( renderer ) );
+		//Fx.run( () -> this.staticRender( renderer ) );
 
 		Thread runner = new Thread( () -> {
-			long counter = 0;
+			final AtomicLong counter = new AtomicLong();
 			while( true ) {
-				long finalCounter = counter;
 				Fx.run( () -> {
 					renderer.clear();
-					dynamicRender( renderer, finalCounter );
+					dynamicRender( renderer, counter.getAndIncrement() );
 					staticRender( renderer );
 				} );
-				counter++;
 				try {
-					Thread.sleep( 10 );
+					Thread.sleep( FREQ_60_HZ );
 				} catch( InterruptedException e ) {
 					e.printStackTrace();
 				}
