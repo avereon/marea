@@ -4,12 +4,16 @@ import com.avereon.curve.math.Point;
 import com.avereon.curve.math.Vector;
 import com.avereon.marea.*;
 import com.avereon.marea.geom.*;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
+import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
@@ -17,6 +21,10 @@ import java.util.Arrays;
 
 @CustomLog
 public class FxRenderer2d extends Canvas implements Renderer2d {
+
+	public static final double DEFAULT_DPI = 96;
+
+	public static final double DEFAULT_ZOOM = 1.0;
 
 	/**
 	 * This value needs to be large enough to allow small font heights to be
@@ -34,16 +42,35 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	private Affine worldTextTransform = new Affine( Transform.scale( 1, 1 ) );
 
-	private double[] dpi = new double[]{ 96, 96 };
+	private DoubleProperty dpiX;
 
-	private double[] viewpoint = new double[]{ 0, 0 };
+	private DoubleProperty dpiY;
 
-	private double[] zoom = new double[]{ 1, 1 };
+	private DoubleProperty zoomX;
+
+	private DoubleProperty zoomY;
+
+	private DoubleProperty viewpointX;
+
+	private DoubleProperty viewpointY;
 
 	public FxRenderer2d( double width, double height ) {
 		super( width, height );
-		widthProperty().addListener( ( p, o, n ) -> updateWorldTransforms() );
-		heightProperty().addListener( ( p, o, n ) -> updateWorldTransforms() );
+
+		setOnScroll( e -> {
+			if( e.getDeltaY() != 0.0 ) {
+				double zoomX = getZoom().getX();
+				double zoomY = getZoom().getY();
+
+				double scale = Math.signum( e.getDeltaY() ) < 0 ? 0.9 : 1.0 / 0.9;
+
+				zoomX = scale * zoomX;
+				zoomY = scale * zoomY;
+
+				Point2D mouse = parentToLocal( e.getX(), e.getY() );
+				setZoomAt( mouse.getX(), mouse.getY(), zoomX, zoomY );
+			}
+		} );
 	}
 
 	@Override
@@ -53,21 +80,152 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	@Override
+	public double getDpiX() {
+		return dpiXProperty().getValue();
+	}
+
+	@Override
+	public void setDpiX( double dpiX ) {
+		updateWorldTransforms( dpiX, getDpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY() );
+		dpiXProperty().set( dpiX );
+	}
+
+	@Override
+	public DoubleProperty dpiXProperty() {
+		if( dpiX == null ) dpiX = new SimpleDoubleProperty( DEFAULT_DPI );
+		return dpiX;
+	}
+
+	@Override
+	public double getDpiY() {
+		return dpiYProperty().getValue();
+	}
+
+	@Override
+	public void setDpiY( double dpiY ) {
+		updateWorldTransforms( getDpiX(), dpiY, getZoomX(), getZoomY(), getViewpointX(), getViewpointY() );
+		dpiYProperty().set( dpiY );
+	}
+
+	@Override
+	public DoubleProperty dpiYProperty() {
+		if( dpiY == null ) dpiY = new SimpleDoubleProperty( DEFAULT_DPI );
+		return dpiY;
+	}
+
+	public Point2D getDpi() {
+		return new Point2D( getDpiX(), getDpiY() );
+	}
+
+	@Override
 	public void setDpi( double dpiX, double dpiY ) {
-		dpi = new double[]{ dpiX, dpiY };
-		updateWorldTransforms();
+		updateWorldTransform( dpiX, dpiY, getZoomX(), getZoomY(), getViewpointX(), getViewpointY() );
+		dpiXProperty().set( dpiX );
+		dpiYProperty().set( dpiY );
+	}
+
+	@Override
+	public double getZoomX() {
+		return zoomXProperty().getValue();
+	}
+
+	@Override
+	public void setZoomX( double zoomX ) {
+		updateWorldTransforms( getDpiX(), getDpiY(), zoomX, getZoomY(), getViewpointX(), getViewpointY() );
+		zoomXProperty().set( zoomX );
+	}
+
+	@Override
+	public DoubleProperty zoomXProperty() {
+		if( zoomX == null ) zoomX = new SimpleDoubleProperty( DEFAULT_ZOOM );
+		return zoomX;
+	}
+
+	@Override
+	public double getZoomY() {
+		return zoomYProperty().getValue();
+	}
+
+	@Override
+	public void setZoomY( double zoomY ) {
+		updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), zoomY, getViewpointX(), getViewpointY() );
+		zoomYProperty().set( zoomY );
+	}
+
+	@Override
+	public DoubleProperty zoomYProperty() {
+		if( zoomY == null ) zoomY = new SimpleDoubleProperty( DEFAULT_ZOOM );
+		return zoomY;
+	}
+
+	@Override
+	public Point2D getZoom() {
+		return new Point2D( getZoomX(), getZoomY() );
 	}
 
 	@Override
 	public void setZoom( double zoomX, double zoomY ) {
-		zoom = new double[]{ zoomX, zoomY };
-		updateWorldTransforms();
+		updateWorldTransforms( getDpiX(), getDpiY(), zoomX, zoomY, getViewpointX(), getViewpointY() );
+		zoomXProperty().set( zoomX );
+		zoomYProperty().set( zoomY );
 	}
 
 	@Override
-	public void setViewpoint( double x, double y ) {
-		viewpoint = new double[]{ x, y };
-		updateWorldTransforms();
+	public double getViewpointX() {
+		return viewpointXProperty().getValue();
+	}
+
+	@Override
+	public void setViewpointX( double viewpointX ) {
+		updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), viewpointX, getViewpointY() );
+		viewpointXProperty().set( viewpointX );
+	}
+
+	@Override
+	public DoubleProperty viewpointXProperty() {
+		if( viewpointX == null ) viewpointX = new SimpleDoubleProperty( DEFAULT_ZOOM );
+		return viewpointX;
+	}
+
+	@Override
+	public double getViewpointY() {
+		return viewpointYProperty().getValue();
+	}
+
+	@Override
+	public void setViewpointY( double viewpointY ) {
+		updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointX(), viewpointY );
+		viewpointYProperty().set( viewpointY );
+	}
+
+	@Override
+	public DoubleProperty viewpointYProperty() {
+		if( viewpointY == null ) viewpointY = new SimpleDoubleProperty( DEFAULT_ZOOM );
+		return viewpointY;
+	}
+
+	@Override
+	public Point2D getViewpoint() {
+		return new Point2D( getViewpointX(), getViewpointY() );
+	}
+
+	@Override
+	public void setViewpoint( double viewpointX, double viewpointY ) {
+		updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), viewpointX, viewpointY );
+		viewpointXProperty().set( viewpointX );
+		viewpointYProperty().set( viewpointY );
+	}
+
+	public void setZoomAt( double viewpointX, double viewpointY, double zoomX, double zoomY ) {
+		double x = viewpointX + (getViewpointX() - viewpointX) * getZoomX() / zoomX;
+		double y = viewpointY + (getViewpointY() - viewpointY) * getZoomY() / zoomY;
+
+		// Set the new zoom and viewpoint
+		updateWorldTransforms( getDpiX(), getDpiY(), zoomX, zoomY, x, y );
+		viewpointXProperty().set( x );
+		viewpointYProperty().set( y );
+		zoomXProperty().set( zoomX );
+		zoomYProperty().set( zoomY );
 	}
 
 	@Override
@@ -84,6 +242,20 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		getGraphicsContext2D().setStroke( pen.paint() );
 		getGraphicsContext2D().setLineWidth( pen.width() );
 		getGraphicsContext2D().strokeLine( position, 0, position, getHeight() );
+	}
+
+	@Override
+	public Point2D localToParent( double x, double y ) {
+		return worldTransform.transform( x, y );
+	}
+
+	@Override
+	public Point2D parentToLocal( double x, double y ) {
+		try {
+			return worldTransform.inverseTransform( x, y );
+		} catch( NonInvertibleTransformException exception ) {
+			return null;
+		}
 	}
 
 	@Override
@@ -213,12 +385,12 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		getGraphicsContext2D().setLineDashOffset( getGraphicsContext2D().getLineDashOffset() * scale );
 	}
 
-	private void updateWorldTransforms() {
-		worldTextTransform = updateWorldTextTransform();
-		worldTransform = updateWorldTransform();
+	private void updateWorldTransforms( double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY ) {
+		worldTextTransform = updateWorldTextTransform( dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY );
+		worldTransform = updateWorldTransform( dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY );
 	}
 
-	private Affine updateWorldTransform() {
+	private Affine updateWorldTransform( double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY ) {
 		Affine affine = new Affine();
 
 		// Center the origin
@@ -228,18 +400,18 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		affine.append( Transform.scale( 1, -1 ) );
 
 		// Scale for screen DPI
-		affine.append( Transform.scale( dpi[ 0 ], dpi[ 1 ] ) );
+		affine.append( Transform.scale( dpiX,dpiY ) );
 
 		// Apply the zoom factor
-		affine.append( Transform.scale( zoom[ 0 ], zoom[ 1 ] ) );
+		affine.append( Transform.scale( zoomX, zoomY ) );
 
 		// Center the viewpoint. The viewpoint is given in world coordinates
-		affine.append( Transform.translate( -viewpoint[ 0 ], -viewpoint[ 1 ] ) );
+		affine.append( Transform.translate( -viewpointX, -viewpointY ) );
 
 		return affine;
 	}
 
-	private Affine updateWorldTextTransform() {
+	private Affine updateWorldTextTransform( double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY ) {
 		Affine affine = new Affine();
 
 		// Center the origin
@@ -248,13 +420,13 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		// Do NOT invert the y-axis
 
 		// Scale for screen DPI
-		affine.append( Transform.scale( dpi[ 0 ], dpi[ 1 ] ) );
+		affine.append( Transform.scale( dpiX, dpiY ) );
 
 		// Apply the zoom factor
-		affine.append( Transform.scale( zoom[ 0 ] / FONT_POINT_SIZE, zoom[ 1 ] / FONT_POINT_SIZE ) );
+		affine.append( Transform.scale( zoomX / FONT_POINT_SIZE, zoomY / FONT_POINT_SIZE ) );
 
 		// Center the viewpoint. The viewpoint is given in world coordinates
-		affine.append( Transform.translate( -viewpoint[ 0 ] * FONT_POINT_SIZE, viewpoint[ 1 ] * FONT_POINT_SIZE ) );
+		affine.append( Transform.translate( -viewpointX * FONT_POINT_SIZE, viewpointY * FONT_POINT_SIZE ) );
 
 		return affine;
 	}

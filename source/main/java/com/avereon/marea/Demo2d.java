@@ -3,7 +3,6 @@ package com.avereon.marea;
 import com.avereon.curve.math.Point;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.*;
-import com.avereon.zarra.javafx.Fx;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,6 +10,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import lombok.CustomLog;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,8 +20,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 
+@CustomLog
 public class Demo2d extends Application {
 
 	long FREQ_60_HZ = 1000 / 60;
@@ -36,6 +36,11 @@ public class Demo2d extends Application {
 		renderer.setZoom( 5, 5 );
 		renderer.setViewpoint( 0.5, 0.1 );
 
+		renderer.zoomXProperty().addListener( ( p, o, n ) -> staticRender(renderer) );
+		renderer.zoomYProperty().addListener( ( p, o, n ) -> staticRender(renderer) );
+		renderer.viewpointXProperty().addListener( ( p, o, n ) -> staticRender(renderer) );
+		renderer.viewpointYProperty().addListener( ( p, o, n ) -> staticRender(renderer) );
+
 		Parent container = new BorderPane( renderer );
 		Scene scene = (new Scene( container, Color.NAVY ));
 		stage.setScene( scene );
@@ -43,26 +48,31 @@ public class Demo2d extends Application {
 
 		//Fx.run( () -> this.staticRender( renderer ) );
 
-		Thread runner = new Thread( () -> {
-			final AtomicLong counter = new AtomicLong();
-			while( true ) {
-				Fx.run( () -> {
-					renderer.clear();
-					dynamicRender( renderer, counter.getAndIncrement() );
-					staticRender( renderer );
-				} );
-				try {
-					Thread.sleep( FREQ_60_HZ );
-				} catch( InterruptedException e ) {
-					e.printStackTrace();
-				}
-			}
-		} );
-		runner.setDaemon( true );
-		runner.start();
+		renderer.clear();
+		staticRender( renderer );
+
+//		Thread runner = new Thread( () -> {
+//			final AtomicLong counter = new AtomicLong();
+//			while( true ) {
+//				Fx.run( () -> {
+//					renderer.clear();
+//					dynamicRender( renderer, counter.getAndIncrement() );
+//					staticRender( renderer );
+//				} );
+//				try {
+//					Thread.sleep( FREQ_60_HZ );
+//				} catch( InterruptedException e ) {
+//					e.printStackTrace();
+//				}
+//			}
+//		} );
+//		runner.setDaemon( true );
+//		runner.start();
 	}
 
 	private void staticRender( Renderer2d renderer ) {
+		renderer.clear();
+
 		Pen outlinePen = new Pen( Color.YELLOW, 1 );
 		renderer.drawHRule( 10.5, outlinePen );
 		renderer.drawHRule( renderer.getHeight() - 10.5, outlinePen );
@@ -85,10 +95,12 @@ public class Demo2d extends Application {
 			e.printStackTrace();
 		}
 
-		Pen orangePen = new Pen( Color.ORANGE, 0.01 );
-		Pen yellowPen = new Pen( Color.YELLOW, 0.01 );
-		Pen goldenPen = new Pen( Color.GOLDENROD, 0.01 );
-		Pen brownPen = new Pen( Color.BROWN, 0.01 );
+		double size = 0.01;
+
+		Pen orangePen = new Pen( Color.ORANGE, size );
+		Pen yellowPen = new Pen( Color.YELLOW, size );
+		Pen goldenPen = new Pen( Color.GOLDENROD, size );
+		Pen brownPen = new Pen( Color.BROWN, size );
 
 		// Draw checks
 		renderer.draw( new Line( -0.6, -0.1, -0.4, 0.1 ), orangePen );
