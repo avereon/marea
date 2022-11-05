@@ -56,7 +56,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	private DoubleProperty viewpointY;
 
-	private DoubleProperty zoomFactorProperty;
+	private DoubleProperty zoomFactor;
 
 	private double positiveZoomFactor;
 
@@ -91,25 +91,25 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public double getZoomFactor() {
-		return zoomFactorProperty().getValue();
+		return zoomFactor == null ? DEFAULT_ZOOM_FACTOR : zoomFactorProperty().getValue();
 	}
 
 	@Override
 	public void setZoomFactor( double zoomFactor ) {
 		zoomFactorProperty().set( zoomFactor );
-		positiveZoomFactor = 1.0 +  zoomFactor;
+		positiveZoomFactor = 1.0 + zoomFactor;
 		negativeZoomFactor = 1.0 / positiveZoomFactor;
 	}
 
 	@Override
 	public DoubleProperty zoomFactorProperty() {
-		if( zoomFactorProperty == null ) zoomFactorProperty = new SimpleDoubleProperty( DEFAULT_ZOOM_FACTOR );
-		return zoomFactorProperty;
+		if( zoomFactor == null ) zoomFactor = new SimpleDoubleProperty( DEFAULT_ZOOM_FACTOR );
+		return zoomFactor;
 	}
 
 	@Override
 	public double getDpiX() {
-		return dpiXProperty().getValue();
+		return dpiX == null ? DEFAULT_DPI : dpiXProperty().getValue();
 	}
 
 	@Override
@@ -126,7 +126,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public double getDpiY() {
-		return dpiYProperty().getValue();
+		return dpiY == null ? DEFAULT_DPI : dpiYProperty().getValue();
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public double getZoomX() {
-		return zoomXProperty().getValue();
+		return zoomX == null ? DEFAULT_ZOOM : zoomXProperty().getValue();
 	}
 
 	@Override
@@ -171,7 +171,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public double getZoomY() {
-		return zoomYProperty().getValue();
+		return zoomY == null ? DEFAULT_ZOOM : zoomYProperty().getValue();
 	}
 
 	@Override
@@ -200,7 +200,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public double getViewpointX() {
-		return viewpointXProperty().getValue();
+		return viewpointX == null ? 0.0 : viewpointXProperty().getValue();
 	}
 
 	@Override
@@ -217,7 +217,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public double getViewpointY() {
-		return viewpointYProperty().getValue();
+		return viewpointY == null ? 0.0 : viewpointYProperty().getValue();
 	}
 
 	@Override
