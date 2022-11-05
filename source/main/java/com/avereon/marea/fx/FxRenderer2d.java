@@ -26,6 +26,8 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	public static final double DEFAULT_ZOOM = 1.0;
 
+	public static final double DEFAULT_ZOOM_FACTOR = 0.1;
+
 	/**
 	 * This value needs to be large enough to allow small font heights to be
 	 * rendered correctly. This is done by choosing a value that ensures small
@@ -54,15 +56,23 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	private DoubleProperty viewpointY;
 
+	private DoubleProperty zoomFactorProperty;
+
+	private double positiveZoomFactor;
+
+	private double negativeZoomFactor;
+
 	public FxRenderer2d( double width, double height ) {
 		super( width, height );
+
+		setZoomFactor( DEFAULT_ZOOM_FACTOR );
 
 		setOnScroll( e -> {
 			if( e.getDeltaY() != 0.0 ) {
 				double zoomX = getZoom().getX();
 				double zoomY = getZoom().getY();
 
-				double scale = Math.signum( e.getDeltaY() ) < 0 ? 0.9 : 1.0 / 0.9;
+				double scale = Math.signum( e.getDeltaY() ) < 0 ? negativeZoomFactor : positiveZoomFactor;
 
 				zoomX = scale * zoomX;
 				zoomY = scale * zoomY;
@@ -77,6 +87,24 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	public void clear() {
 		getGraphicsContext2D().setTransform( screenTransform );
 		getGraphicsContext2D().clearRect( 0, 0, getWidth(), getHeight() );
+	}
+
+	@Override
+	public double getZoomFactor() {
+		return zoomFactorProperty().getValue();
+	}
+
+	@Override
+	public void setZoomFactor( double zoomFactor ) {
+		zoomFactorProperty().set( zoomFactor );
+		positiveZoomFactor = 1.0 +  zoomFactor;
+		negativeZoomFactor = 1.0 / positiveZoomFactor;
+	}
+
+	@Override
+	public DoubleProperty zoomFactorProperty() {
+		if( zoomFactorProperty == null ) zoomFactorProperty = new SimpleDoubleProperty( DEFAULT_ZOOM_FACTOR );
+		return zoomFactorProperty;
 	}
 
 	@Override
@@ -400,7 +428,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		affine.append( Transform.scale( 1, -1 ) );
 
 		// Scale for screen DPI
-		affine.append( Transform.scale( dpiX,dpiY ) );
+		affine.append( Transform.scale( dpiX, dpiY ) );
 
 		// Apply the zoom factor
 		affine.append( Transform.scale( zoomX, zoomY ) );

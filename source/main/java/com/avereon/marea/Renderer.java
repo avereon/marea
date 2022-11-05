@@ -69,6 +69,12 @@ public interface Renderer {
 
 	DoubleProperty heightProperty();
 
+	double getZoomFactor();
+
+	void setZoomFactor(double zoomFactor);
+
+	DoubleProperty zoomFactorProperty();
+
 	double getScaleX();
 
 	DoubleProperty scaleXProperty();
