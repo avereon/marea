@@ -62,10 +62,29 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	private double negativeZoomFactor;
 
+	private Point2D dragViewpoint;
+
+	private Point2D dragAnchor;
+
 	public FxRenderer2d( double width, double height ) {
 		super( width, height );
 
 		setZoomFactor( DEFAULT_ZOOM_FACTOR );
+
+		setOnMousePressed( e -> {
+			dragViewpoint = getViewpoint();
+			dragAnchor = new Point2D( e.getX(), e.getY() );
+		} );
+
+		setOnMouseDragged( e -> {
+			dragMove( e.getX(), e.getY() );
+		} );
+
+		setOnMouseReleased( e -> {
+			dragMove( e.getX(), e.getY() );
+			dragAnchor = null;
+			dragViewpoint = null;
+		} );
 
 		setOnScroll( e -> {
 			if( e.getDeltaY() != 0.0 ) {
@@ -81,6 +100,12 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 				setZoomAt( mouse.getX(), mouse.getY(), zoomX, zoomY );
 			}
 		} );
+	}
+
+	private void dragMove( double x, double y ) {
+		double dx = (x - dragAnchor.getX()) / (getDpiX() * getZoomX());
+		double dy = (y - dragAnchor.getY()) / (getDpiY() * getZoomY());
+		setViewpoint( dragViewpoint.getX() - dx, dragViewpoint.getY() + dy );
 	}
 
 	@Override
