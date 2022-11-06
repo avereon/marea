@@ -8,6 +8,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
@@ -71,20 +72,11 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 		setZoomFactor( DEFAULT_ZOOM_FACTOR );
 
-		setOnMousePressed( e -> {
-			dragViewpoint = getViewpoint();
-			dragAnchor = new Point2D( e.getX(), e.getY() );
-		} );
+		setOnMousePressed( this::doOnDragBegin );
 
-		setOnMouseDragged( e -> {
-			dragMove( e.getX(), e.getY() );
-		} );
+		setOnMouseDragged( this::doOnDragMouse );
 
-		setOnMouseReleased( e -> {
-			dragMove( e.getX(), e.getY() );
-			dragAnchor = null;
-			dragViewpoint = null;
-		} );
+		setOnMouseReleased( this::doOnDragFinish );
 
 		setOnScroll( e -> {
 			if( e.getDeltaY() != 0.0 ) {
@@ -102,10 +94,19 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		} );
 	}
 
-	private void dragMove( double x, double y ) {
-		double dx = (x - dragAnchor.getX()) / (getDpiX() * getZoomX());
-		double dy = (y - dragAnchor.getY()) / (getDpiY() * getZoomY());
-		setViewpoint( dragViewpoint.getX() - dx, dragViewpoint.getY() + dy );
+	private void doOnDragBegin( MouseEvent e ) {
+		dragViewpoint = getViewpoint();
+		dragAnchor = new Point2D( e.getX(), e.getY() );
+	}
+
+	private void doOnDragMouse( MouseEvent e ) {
+		dragMove( e.getX(), e.getY() );
+	}
+
+	private void doOnDragFinish( MouseEvent e ) {
+		dragMove( e.getX(), e.getY() );
+		dragAnchor = null;
+		dragViewpoint = null;
 	}
 
 	@Override
@@ -499,6 +500,12 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	private void worldSetup( Shape2d shape ) {
 		// set transform to screen
 		getGraphicsContext2D().setTransform( rotate( worldTransform, shape.getRotate(), shape.getAnchor() ) );
+	}
+
+	private void dragMove( double x, double y ) {
+		double dx = (x - dragAnchor.getX()) / (getDpiX() * getZoomX());
+		double dy = (y - dragAnchor.getY()) / (getDpiY() * getZoomY());
+		setViewpoint( dragViewpoint.getX() - dx, dragViewpoint.getY() + dy );
 	}
 
 	private void runPath( Path path ) {
