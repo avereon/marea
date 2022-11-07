@@ -120,6 +120,8 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 			getWidth(),
 			n.doubleValue()
 		) );
+
+		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getWidth(), getHeight() );
 	}
 
 	@Override
