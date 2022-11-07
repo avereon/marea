@@ -36,38 +36,43 @@ public class Demo2d extends Application {
 		renderer.setZoom( 5, 5 );
 		renderer.setViewpoint( 0.5, 0.1 );
 
-		renderer.zoomXProperty().addListener( ( p, o, n ) -> staticRender(renderer) );
-		renderer.zoomYProperty().addListener( ( p, o, n ) -> staticRender(renderer) );
-		renderer.viewpointXProperty().addListener( ( p, o, n ) -> staticRender(renderer) );
-		renderer.viewpointYProperty().addListener( ( p, o, n ) -> staticRender(renderer) );
+		renderer.zoomXProperty().addListener( ( p, o, n ) -> staticRender( renderer ) );
+		renderer.zoomYProperty().addListener( ( p, o, n ) -> staticRender( renderer ) );
+		renderer.viewpointXProperty().addListener( ( p, o, n ) -> staticRender( renderer ) );
+		renderer.viewpointYProperty().addListener( ( p, o, n ) -> staticRender( renderer ) );
+		renderer.widthProperty().addListener( ( p, o, n ) -> staticRender( renderer ) );
+		renderer.heightProperty().addListener( ( p, o, n ) -> staticRender( renderer ) );
 
 		Parent container = new BorderPane( renderer );
 		Scene scene = (new Scene( container, Color.NAVY ));
 		stage.setScene( scene );
 		stage.show();
 
+		scene.widthProperty().addListener( ( p, o, n ) -> renderer.setWidth( n.doubleValue() ) );
+		scene.heightProperty().addListener( ( p, o, n ) -> renderer.setHeight( n.doubleValue() ) );
+
 		//Fx.run( () -> this.staticRender( renderer ) );
 
 		renderer.clear();
 		staticRender( renderer );
 
-//		Thread runner = new Thread( () -> {
-//			final AtomicLong counter = new AtomicLong();
-//			while( true ) {
-//				Fx.run( () -> {
-//					renderer.clear();
-//					dynamicRender( renderer, counter.getAndIncrement() );
-//					staticRender( renderer );
-//				} );
-//				try {
-//					Thread.sleep( FREQ_60_HZ );
-//				} catch( InterruptedException e ) {
-//					e.printStackTrace();
-//				}
-//			}
-//		} );
-//		runner.setDaemon( true );
-//		runner.start();
+		//		Thread runner = new Thread( () -> {
+		//			final AtomicLong counter = new AtomicLong();
+		//			while( true ) {
+		//				Fx.run( () -> {
+		//					renderer.clear();
+		//					dynamicRender( renderer, counter.getAndIncrement() );
+		//					staticRender( renderer );
+		//				} );
+		//				try {
+		//					Thread.sleep( FREQ_60_HZ );
+		//				} catch( InterruptedException e ) {
+		//					e.printStackTrace();
+		//				}
+		//			}
+		//		} );
+		//		runner.setDaemon( true );
+		//		runner.start();
 	}
 
 	private void staticRender( Renderer2d renderer ) {

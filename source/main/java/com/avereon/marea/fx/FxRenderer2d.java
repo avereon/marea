@@ -92,27 +92,18 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 				setZoomAt( mouse.getX(), mouse.getY(), zoomX, zoomY );
 			}
 		} );
-	}
 
-	private void doOnDragBegin( MouseEvent e ) {
-		dragViewpoint = getViewpoint();
-		dragAnchor = new Point2D( e.getX(), e.getY() );
-	}
-
-	private void doOnDragMouse( MouseEvent e ) {
-		dragMove( e.getX(), e.getY() );
-	}
-
-	private void doOnDragFinish( MouseEvent e ) {
-		dragMove( e.getX(), e.getY() );
-		dragAnchor = null;
-		dragViewpoint = null;
+		widthProperty().addListener( ( p, o, n ) -> updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointY(), getViewpointY(), n.doubleValue(), getHeight() ) );
+		heightProperty().addListener( ( p, o, n ) -> updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointY(), getViewpointY(), getWidth(), n.doubleValue() ) );
 	}
 
 	@Override
 	public void clear() {
 		getGraphicsContext2D().setTransform( screenTransform );
 		getGraphicsContext2D().clearRect( 0, 0, getWidth(), getHeight() );
+
+		//		getGraphicsContext2D().setFill( Color.GREEN );
+		//		getGraphicsContext2D().fillRect( 0, 0, getWidth(), getHeight() );
 	}
 
 	@Override
@@ -140,7 +131,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setDpiX( double dpiX ) {
-		updateWorldTransforms( dpiX, getDpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY() );
+		updateWorldTransforms( dpiX, getDpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getWidth(), getHeight() );
 		dpiXProperty().set( dpiX );
 	}
 
@@ -157,7 +148,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setDpiY( double dpiY ) {
-		updateWorldTransforms( getDpiX(), dpiY, getZoomX(), getZoomY(), getViewpointX(), getViewpointY() );
+		updateWorldTransforms( getDpiX(), dpiY, getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getWidth(), getHeight() );
 		dpiYProperty().set( dpiY );
 	}
 
@@ -173,7 +164,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setDpi( double dpiX, double dpiY ) {
-		updateWorldTransform( dpiX, dpiY, getZoomX(), getZoomY(), getViewpointX(), getViewpointY() );
+		updateWorldTransform( dpiX, dpiY, getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getWidth(), getHeight() );
 		dpiXProperty().set( dpiX );
 		dpiYProperty().set( dpiY );
 	}
@@ -185,7 +176,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setZoomX( double zoomX ) {
-		updateWorldTransforms( getDpiX(), getDpiY(), zoomX, getZoomY(), getViewpointX(), getViewpointY() );
+		updateWorldTransforms( getDpiX(), getDpiY(), zoomX, getZoomY(), getViewpointX(), getViewpointY(), getWidth(), getHeight() );
 		zoomXProperty().set( zoomX );
 	}
 
@@ -202,7 +193,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setZoomY( double zoomY ) {
-		updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), zoomY, getViewpointX(), getViewpointY() );
+		updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), zoomY, getViewpointX(), getViewpointY(), getWidth(), getHeight() );
 		zoomYProperty().set( zoomY );
 	}
 
@@ -219,7 +210,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setZoom( double zoomX, double zoomY ) {
-		updateWorldTransforms( getDpiX(), getDpiY(), zoomX, zoomY, getViewpointX(), getViewpointY() );
+		updateWorldTransforms( getDpiX(), getDpiY(), zoomX, zoomY, getViewpointX(), getViewpointY(), getWidth(), getHeight() );
 		zoomXProperty().set( zoomX );
 		zoomYProperty().set( zoomY );
 	}
@@ -231,7 +222,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setViewpointX( double viewpointX ) {
-		updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), viewpointX, getViewpointY() );
+		updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), viewpointX, getViewpointY(), getWidth(), getHeight() );
 		viewpointXProperty().set( viewpointX );
 	}
 
@@ -248,7 +239,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setViewpointY( double viewpointY ) {
-		updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointX(), viewpointY );
+		updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointX(), viewpointY, getWidth(), getHeight() );
 		viewpointYProperty().set( viewpointY );
 	}
 
@@ -265,7 +256,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setViewpoint( double viewpointX, double viewpointY ) {
-		updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), viewpointX, viewpointY );
+		updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), viewpointX, viewpointY, getWidth(), getHeight() );
 		viewpointXProperty().set( viewpointX );
 		viewpointYProperty().set( viewpointY );
 	}
@@ -275,7 +266,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		double y = viewpointY + (getViewpointY() - viewpointY) * getZoomY() / zoomY;
 
 		// Set the new zoom and viewpoint
-		updateWorldTransforms( getDpiX(), getDpiY(), zoomX, zoomY, x, y );
+		updateWorldTransforms( getDpiX(), getDpiY(), zoomX, zoomY, x, y, getWidth(), getHeight() );
 		viewpointXProperty().set( x );
 		viewpointYProperty().set( y );
 		zoomXProperty().set( zoomX );
@@ -439,16 +430,16 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		getGraphicsContext2D().setLineDashOffset( getGraphicsContext2D().getLineDashOffset() * scale );
 	}
 
-	private void updateWorldTransforms( double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY ) {
-		worldTextTransform = updateWorldTextTransform( dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY );
-		worldTransform = updateWorldTransform( dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY );
+	private void updateWorldTransforms( double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double width, double height ) {
+		worldTextTransform = updateWorldTextTransform( dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, width, height );
+		worldTransform = updateWorldTransform( dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, width, height );
 	}
 
-	private Affine updateWorldTransform( double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY ) {
+	private static Affine updateWorldTransform( double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double width, double height ) {
 		Affine affine = new Affine();
 
 		// Center the origin
-		affine.append( Transform.translate( 0.5 * getWidth(), 0.5 * getHeight() ) );
+		affine.append( Transform.translate( 0.5 * width, 0.5 * height ) );
 
 		// Invert the y-axis
 		affine.append( Transform.scale( 1, -1 ) );
@@ -465,11 +456,11 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		return affine;
 	}
 
-	private Affine updateWorldTextTransform( double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY ) {
+	private static Affine updateWorldTextTransform( double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double width, double height ) {
 		Affine affine = new Affine();
 
 		// Center the origin
-		affine.append( Transform.translate( 0.5 * getWidth(), 0.5 * getHeight() ) );
+		affine.append( Transform.translate( 0.5 * width, 0.5 * height ) );
 
 		// Do NOT invert the y-axis
 
@@ -500,6 +491,21 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	private void worldSetup( Shape2d shape ) {
 		// set transform to screen
 		getGraphicsContext2D().setTransform( rotate( worldTransform, shape.getRotate(), shape.getAnchor() ) );
+	}
+
+	private void doOnDragBegin( MouseEvent e ) {
+		dragViewpoint = getViewpoint();
+		dragAnchor = new Point2D( e.getX(), e.getY() );
+	}
+
+	private void doOnDragMouse( MouseEvent e ) {
+		dragMove( e.getX(), e.getY() );
+	}
+
+	private void doOnDragFinish( MouseEvent e ) {
+		dragMove( e.getX(), e.getY() );
+		dragAnchor = null;
+		dragViewpoint = null;
 	}
 
 	private void dragMove( double x, double y ) {

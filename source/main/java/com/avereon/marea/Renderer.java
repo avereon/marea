@@ -63,15 +63,19 @@ public interface Renderer {
 
 	double getWidth();
 
+	void setWidth( double width );
+
 	DoubleProperty widthProperty();
 
 	double getHeight();
+
+	void setHeight( double height );
 
 	DoubleProperty heightProperty();
 
 	double getZoomFactor();
 
-	void setZoomFactor(double zoomFactor);
+	void setZoomFactor( double zoomFactor );
 
 	DoubleProperty zoomFactorProperty();
 
@@ -94,4 +98,5 @@ public interface Renderer {
 	Point2D localToParent( double x, double y );
 
 	Point2D parentToLocal( double x, double y );
+
 }
