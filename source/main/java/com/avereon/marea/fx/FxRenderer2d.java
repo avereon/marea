@@ -93,8 +93,8 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 			}
 		} );
 
-		widthProperty().addListener( ( p, o, n ) -> updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointY(), getViewpointY(), n.doubleValue(), getHeight() ) );
-		heightProperty().addListener( ( p, o, n ) -> updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointY(), getViewpointY(), getWidth(), n.doubleValue() ) );
+		widthProperty().addListener( ( p, o, n ) -> updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), n.doubleValue(), getHeight() ) );
+		heightProperty().addListener( ( p, o, n ) -> updateWorldTransforms( getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getWidth(), n.doubleValue() ) );
 	}
 
 	@Override
@@ -164,7 +164,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setDpi( double dpiX, double dpiY ) {
-		updateWorldTransform( dpiX, dpiY, getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getWidth(), getHeight() );
+		updateWorldTransforms( dpiX, dpiY, getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getWidth(), getHeight() );
 		dpiXProperty().set( dpiX );
 		dpiYProperty().set( dpiY );
 	}
@@ -431,47 +431,53 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	private void updateWorldTransforms( double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double width, double height ) {
-		worldTextTransform = updateWorldTextTransform( dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, width, height );
-		worldTransform = updateWorldTransform( dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, width, height );
+		worldTransform = createWorldTransform( dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, width, height, false );
+		worldTextTransform = createWorldTransform( dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, width, height, true );
 	}
 
-	private static Affine updateWorldTransform( double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double width, double height ) {
+	//	private static Affine updateWorldTransform( double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double width, double height ) {
+	//		Affine affine = new Affine();
+	//
+	//		// Center the origin
+	//		affine.append( Transform.translate( 0.5 * width, 0.5 * height ) );
+	//
+	//		// Invert the y-axis
+	//		affine.append( Transform.scale( 1, -1 ) );
+	//
+	//		// Scale for screen DPI
+	//		affine.append( Transform.scale( dpiX, dpiY ) );
+	//
+	//		// Apply the zoom factor
+	//		affine.append( Transform.scale( zoomX, zoomY ) );
+	//
+	//		// Center the viewpoint. The viewpoint is given in world coordinates
+	//		affine.append( Transform.translate( -viewpointX, -viewpointY ) );
+	//
+	//		return affine;
+	//	}
+
+	private static Affine createWorldTransform( double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double width, double height, boolean isFontTransform ) {
+		double fontPointSize = 1.0;
+		if( isFontTransform ) {
+			fontPointSize = FONT_POINT_SIZE;
+		} else {
+			zoomY = -zoomY;
+			viewpointY = -viewpointY;
+		}
+
 		Affine affine = new Affine();
 
 		// Center the origin
 		affine.append( Transform.translate( 0.5 * width, 0.5 * height ) );
 
-		// Invert the y-axis
-		affine.append( Transform.scale( 1, -1 ) );
-
 		// Scale for screen DPI
 		affine.append( Transform.scale( dpiX, dpiY ) );
 
 		// Apply the zoom factor
-		affine.append( Transform.scale( zoomX, zoomY ) );
+		affine.append( Transform.scale( zoomX / fontPointSize, zoomY / fontPointSize ) );
 
 		// Center the viewpoint. The viewpoint is given in world coordinates
-		affine.append( Transform.translate( -viewpointX, -viewpointY ) );
-
-		return affine;
-	}
-
-	private static Affine updateWorldTextTransform( double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double width, double height ) {
-		Affine affine = new Affine();
-
-		// Center the origin
-		affine.append( Transform.translate( 0.5 * width, 0.5 * height ) );
-
-		// Do NOT invert the y-axis
-
-		// Scale for screen DPI
-		affine.append( Transform.scale( dpiX, dpiY ) );
-
-		// Apply the zoom factor
-		affine.append( Transform.scale( zoomX / FONT_POINT_SIZE, zoomY / FONT_POINT_SIZE ) );
-
-		// Center the viewpoint. The viewpoint is given in world coordinates
-		affine.append( Transform.translate( -viewpointX * FONT_POINT_SIZE, viewpointY * FONT_POINT_SIZE ) );
+		affine.append( Transform.translate( -viewpointX * fontPointSize, viewpointY * fontPointSize ) );
 
 		return affine;
 	}
