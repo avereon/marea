@@ -1,9 +1,28 @@
 package com.avereon.marea;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point2D;
 
 public interface Renderer {
+
+	double getWidth();
+
+	void setWidth( double width );
+
+	DoubleProperty widthProperty();
+
+	double getHeight();
+
+	void setHeight( double height );
+
+	DoubleProperty heightProperty();
+
+	LengthUnit getLengthUnit();
+
+	void setLengthUnit( LengthUnit unit );
+
+	ObjectProperty<LengthUnit> lengthUnitProperty();
 
 	Point2D getDpi();
 
@@ -37,6 +56,12 @@ public interface Renderer {
 
 	DoubleProperty zoomYProperty();
 
+	double getZoomFactor();
+
+	void setZoomFactor( double zoomFactor );
+
+	DoubleProperty zoomFactorProperty();
+
 	double getViewpointX();
 
 	void setViewpointX( double viewpointX );
@@ -60,40 +85,6 @@ public interface Renderer {
 	void drawHRule( double position, Pen pen );
 
 	void drawVRule( double position, Pen pen );
-
-	double getWidth();
-
-	void setWidth( double width );
-
-	DoubleProperty widthProperty();
-
-	double getHeight();
-
-	void setHeight( double height );
-
-	DoubleProperty heightProperty();
-
-	double getZoomFactor();
-
-	void setZoomFactor( double zoomFactor );
-
-	DoubleProperty zoomFactorProperty();
-
-	double getScaleX();
-
-	DoubleProperty scaleXProperty();
-
-	double getScaleY();
-
-	DoubleProperty scaleYProperty();
-
-	double getTranslateX();
-
-	DoubleProperty translateXProperty();
-
-	double getTranslateY();
-
-	DoubleProperty translateYProperty();
 
 	Point2D localToParent( double x, double y );
 

@@ -33,7 +33,7 @@ public class Demo2d extends Application {
 
 		FxRenderer2d renderer = new FxRenderer2d( 960, 540 );
 		renderer.setDpi( dpi, dpi );
-		renderer.setZoom( 5, 5 );
+		renderer.setZoom( 10, 10 );
 		renderer.setViewpoint( 0.5, 0.0 );
 
 		renderer.zoomXProperty().addListener( ( p, o, n ) -> staticRender( renderer ) );
