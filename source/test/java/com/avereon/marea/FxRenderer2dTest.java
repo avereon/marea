@@ -24,8 +24,13 @@ public class FxRenderer2dTest {
 	}
 
 	@Test
-	void testDefaultWorldTransform() {
+	void testLocalToParentWithDefaultWorldTransform() {
 		assertThat( renderer.localToParent( 1, 1 ) ).isEqualTo( new Point2D( 196, 4 ) );
+	}
+
+	@Test
+	void testParentToLocalWithDefaultWorldTransform() {
+		assertThat( renderer.parentToLocal( 196, 4 ) ).isEqualTo( new Point2D( 0.9999999999999998, 1 ) );
 	}
 
 	@Test
