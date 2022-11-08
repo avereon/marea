@@ -165,7 +165,7 @@ public class Demo2d extends Application {
 
 	private List<Line> loadAirfoilLines() throws IOException {
 		List<Line> lines = new ArrayList<>();
-		List<double[]> points = new AirfoilReader().loadPoints( "airfoil.txt" );
+		List<double[]> points = new PathReader().loadPoints( "path.txt" );
 		double[] lastPoint = null;
 		for( double[] point : points ) {
 			if( lastPoint != null ) {
@@ -178,7 +178,7 @@ public class Demo2d extends Application {
 
 }
 
-class AirfoilReader {
+class PathReader {
 
 	public List<double[]> loadPoints( String name ) throws IOException {
 		InputStream input = getClass().getClassLoader().getResourceAsStream( name );
