@@ -35,7 +35,7 @@ public class Demo2d extends Application {
 		renderer.setDpi( dpi, dpi );
 		renderer.setZoom( 10, 10 );
 		renderer.setViewpoint( 0.5, 0.0 );
-		renderer.setViewRotate( 45 );
+		//renderer.setViewRotate( 45 );
 
 		renderer.zoomXProperty().addListener( ( p, o, n ) -> staticRender( renderer ) );
 		renderer.zoomYProperty().addListener( ( p, o, n ) -> staticRender( renderer ) );

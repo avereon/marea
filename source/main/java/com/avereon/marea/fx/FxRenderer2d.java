@@ -101,8 +101,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 			}
 		} );
 
-		lengthUnitProperty().addListener( ( p, o, n ) -> updateWorldTransforms(
-			n,
+		lengthUnitProperty().addListener( ( p, o, n ) -> updateWorldTransforms( n,
 			getDpiX(),
 			getDpiY(),
 			getZoomX(),
@@ -143,9 +142,6 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	public void clear() {
 		getGraphicsContext2D().setTransform( screenTransform );
 		getGraphicsContext2D().clearRect( 0, 0, getWidth(), getHeight() );
-
-		//		getGraphicsContext2D().setFill( Color.GREEN );
-		//		getGraphicsContext2D().fillRect( 0, 0, getWidth(), getHeight() );
 	}
 
 	@Override
@@ -449,10 +445,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	private void drawText( Text text ) {
 		double[] anchor = text.getAnchor();
-
-		scalePen( FONT_POINT_SIZE );
-		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -text.getRotate(), Vector.scale( anchor, FONT_POINT_SIZE, -FONT_POINT_SIZE ) ) );
-		getGraphicsContext2D().setFont( new Font( text.getHeight() * FONT_POINT_SIZE ) );
+		useFontScales( anchor, text );
 		getGraphicsContext2D().strokeText( text.getText(), anchor[ 0 ] * FONT_POINT_SIZE, -anchor[ 1 ] * FONT_POINT_SIZE );
 	}
 
@@ -482,10 +475,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	private void fillText( Text text ) {
 		double[] anchor = text.getAnchor();
-
-		scalePen( FONT_POINT_SIZE );
-		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -text.getRotate(), Vector.scale( anchor, FONT_POINT_SIZE, -FONT_POINT_SIZE ) ) );
-		getGraphicsContext2D().setFont( new Font( text.getHeight() * FONT_POINT_SIZE ) );
+		useFontScales( anchor, text );
 		getGraphicsContext2D().fillText( text.getText(), anchor[ 0 ] * FONT_POINT_SIZE, -anchor[ 1 ] * FONT_POINT_SIZE );
 	}
 
@@ -499,10 +489,12 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		getGraphicsContext2D().setLineDashOffset( pen.offset() );
 	}
 
-	private void scalePen( double scale ) {
-		getGraphicsContext2D().setLineWidth( getGraphicsContext2D().getLineWidth() * scale );
-		if( getGraphicsContext2D().getLineDashes() != null ) getGraphicsContext2D().setLineDashes( Arrays.stream( getGraphicsContext2D().getLineDashes() ).map( d -> d * scale ).toArray() );
-		getGraphicsContext2D().setLineDashOffset( getGraphicsContext2D().getLineDashOffset() * scale );
+	private void useFontScales( double[] anchor, Text text ) {
+		getGraphicsContext2D().setLineWidth( getGraphicsContext2D().getLineWidth() * FONT_POINT_SIZE );
+		if( getGraphicsContext2D().getLineDashes() != null ) getGraphicsContext2D().setLineDashes( Arrays.stream( getGraphicsContext2D().getLineDashes() ).map( d -> d * FONT_POINT_SIZE ).toArray() );
+		getGraphicsContext2D().setLineDashOffset( getGraphicsContext2D().getLineDashOffset() * FONT_POINT_SIZE );
+		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -text.getRotate(), Vector.scale( anchor, FONT_POINT_SIZE, -FONT_POINT_SIZE ) ) );
+		getGraphicsContext2D().setFont( new Font( text.getHeight() * FONT_POINT_SIZE ) );
 	}
 
 	private void updateWorldTransforms( LengthUnit lengthUnit, double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double rotate, double width, double height ) {
@@ -516,7 +508,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		double fontPointSize = 1.0;
 		if( isFontTransform ) {
 			fontPointSize = FONT_POINT_SIZE;
-			//rotate =0;
+			rotate = -rotate;
 		} else {
 			zoomY = -zoomY;
 			viewpointY = -viewpointY;
@@ -524,7 +516,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 		Affine affine = new Affine();
 
-		// Center the origin
+		// Center the origin before applying scale and zoom
 		affine.append( Transform.translate( 0.5 * width, 0.5 * height ) );
 
 		// Scale for screen DPI
@@ -533,11 +525,11 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		// Apply the zoom factor
 		affine.append( Transform.scale( zoomX / fontPointSize, zoomY / fontPointSize ) );
 
+		// Rotate the view
+		affine.append( Transform.rotate( rotate, -viewpointX * fontPointSize, viewpointY * fontPointSize ) );
+
 		// Center the viewpoint. The viewpoint is given in world coordinates.
 		affine.append( Transform.translate( -viewpointX * fontPointSize, viewpointY * fontPointSize ) );
-
-		// Rotate the view
-		//affine.append( Transform.rotate( rotate, 0, 0 ) );
 
 		return affine;
 	}
