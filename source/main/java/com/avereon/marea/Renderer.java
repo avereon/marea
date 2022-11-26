@@ -78,6 +78,12 @@ public interface Renderer {
 
 	void setViewpoint( double x, double y );
 
+	double getViewRotate();
+
+	void setViewRotate( double viewRotate );
+
+	DoubleProperty viewRotateProperty();
+
 	void setZoomAt( double x, double y, double zoomX, double zoomY );
 
 	void clear();

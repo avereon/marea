@@ -35,6 +35,7 @@ public class Demo2d extends Application {
 		renderer.setDpi( dpi, dpi );
 		renderer.setZoom( 10, 10 );
 		renderer.setViewpoint( 0.5, 0.0 );
+		renderer.setViewRotate( 45 );
 
 		renderer.zoomXProperty().addListener( ( p, o, n ) -> staticRender( renderer ) );
 		renderer.zoomYProperty().addListener( ( p, o, n ) -> staticRender( renderer ) );
@@ -106,6 +107,10 @@ public class Demo2d extends Application {
 		Pen yellowPen = new Pen( Color.YELLOW, size );
 		Pen goldenPen = new Pen( Color.GOLDENROD, size );
 		Pen brownPen = new Pen( Color.BROWN, size );
+
+		// Draw origin
+		renderer.draw( new Line( -0.1, 0, 0.1, 0 ), yellowPen );
+		renderer.draw( new Line( 0, -0.1, 0, 0.1 ), yellowPen );
 
 		// Draw checks
 		renderer.draw( new Line( -0.6, -0.1, -0.4, 0.1 ), orangePen );
