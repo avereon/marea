@@ -117,7 +117,7 @@ public class Demo2d extends Application {
 		renderer.draw( new Ellipse( -0.5, 0.5, 0.1, 0.1 ), yellowPen );
 		renderer.draw( new Ellipse( -0.5, 0.5, 0.1, 0.05, 30 ), orangePen );
 		renderer.draw( new Arc( 0, 0.5, 0.1, 0.1, 0, 0, 135 ), orangePen );
-		renderer.draw( new Text( "Joukowsky", 0.4, 0.4, 0.2, -10 ), orangePen );
+		renderer.draw( new Text( "Joukowsky", 0.4, 0.2, 0.2, -10 ), orangePen );
 		renderer.draw( new Curve( Point.of( 0.9, 0.4 ), Point.of( 0.9, 0.6 ), Point.of( 1.1, 0.4 ), Point.of( 1.1, 0.6 ) ), orangePen );
 		renderer.draw( new Quad( 1.4, 0.4, 1.5, 0.6, 1.6, 0.4 ), orangePen );
 		renderer.draw( airfoil, new Pen( Color.CYAN, 0.01 ) );
@@ -125,7 +125,7 @@ public class Demo2d extends Application {
 		// Fill checks
 		renderer.fill( new Ellipse( -0.5, -0.4, 0.1, 0.1 ), goldenPen );
 		renderer.fill( new Ellipse( -0.5, -0.4, 0.05, 0.1, -120 ), brownPen );
-		renderer.fill( new Text( "Joukowsky", 0.4, -0.5, 0.2, 10 ), brownPen );
+		renderer.fill( new Text( "Joukowsky", 0.4, -0.3, 0.2, 10 ), brownPen );
 		renderer.fill( airfoil, new Pen( Color.BLACK ) );
 	}
 
