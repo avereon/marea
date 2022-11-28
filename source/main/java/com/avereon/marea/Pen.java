@@ -9,9 +9,9 @@ import lombok.experimental.Accessors;
 @Accessors( fluent = true )
 public class Pen {
 
-	private Paint paint;
+	private Paint paint = Color.BLACK;
 
-	private double width;
+	private double width = 1.0;
 
 	private LineCap cap = LineCap.ROUND;
 
@@ -20,6 +20,8 @@ public class Pen {
 	private double[] dashes = new double[]{};
 
 	private double offset = 0.0;
+
+	public Pen() {}
 
 	public Pen( Paint paint ) {
 		this( paint, 1.0 );
