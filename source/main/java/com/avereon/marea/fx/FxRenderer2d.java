@@ -444,8 +444,8 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	private void drawText( Text text ) {
+		useFontScales( text );
 		double[] anchor = text.getAnchor();
-		useFontScales( anchor, text );
 		getGraphicsContext2D().strokeText( text.getText(), anchor[ 0 ] * FONT_POINT_SIZE, -anchor[ 1 ] * FONT_POINT_SIZE );
 	}
 
@@ -474,8 +474,8 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	private void fillText( Text text ) {
+		useFontScales( text );
 		double[] anchor = text.getAnchor();
-		useFontScales( anchor, text );
 		getGraphicsContext2D().fillText( text.getText(), anchor[ 0 ] * FONT_POINT_SIZE, -anchor[ 1 ] * FONT_POINT_SIZE );
 	}
 
@@ -489,7 +489,8 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		getGraphicsContext2D().setLineDashOffset( pen.offset() );
 	}
 
-	private void useFontScales( double[] anchor, Text text ) {
+	private void useFontScales( Text text ) {
+		double[] anchor = text.getAnchor();
 		getGraphicsContext2D().setLineWidth( getGraphicsContext2D().getLineWidth() * FONT_POINT_SIZE );
 		if( getGraphicsContext2D().getLineDashes() != null ) getGraphicsContext2D().setLineDashes( Arrays.stream( getGraphicsContext2D().getLineDashes() ).map( d -> d * FONT_POINT_SIZE ).toArray() );
 		getGraphicsContext2D().setLineDashOffset( getGraphicsContext2D().getLineDashOffset() * FONT_POINT_SIZE );
