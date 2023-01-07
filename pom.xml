@@ -13,7 +13,7 @@
 
 	<groupId>com.avereon</groupId>
 	<artifactId>marea</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.1</version>
 	<packaging>jar</packaging>
 
 	<name>Marea</name>
@@ -47,8 +47,8 @@
 
 		<!-- Version numbers updated 20 Mar 2022 -->
 		<!-- Runtime dependencies -->
-		<curve.version>[0.3-SNAPSHOT,)</curve.version>
-		<zarra.version>[0.8-SNAPSHOT,)</zarra.version>
+		<curve.version>[0.3,)</curve.version>
+		<zarra.version>[0.8,)</zarra.version>
 		<openjfx.version>[17.0,)</openjfx.version>
 		<testfx.version>[4.0,)</testfx.version>
 	</properties>
