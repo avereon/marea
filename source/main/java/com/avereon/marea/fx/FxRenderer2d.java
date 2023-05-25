@@ -75,6 +75,10 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	private Point2D dragAnchor;
 
+	public FxRenderer2d() {
+		this( 0, 0 );
+	}
+
 	public FxRenderer2d( double width, double height ) {
 		super( width, height );
 
