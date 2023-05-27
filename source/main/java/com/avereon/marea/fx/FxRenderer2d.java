@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
@@ -84,26 +85,13 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 		setZoomFactor( DEFAULT_ZOOM_FACTOR );
 
+		setOnScroll( this::doOnScroll );
+
 		setOnMousePressed( this::doOnDragBegin );
 
 		setOnMouseDragged( this::doOnDragMouse );
 
 		setOnMouseReleased( this::doOnDragFinish );
-
-		setOnScroll( e -> {
-			if( e.getDeltaY() != 0.0 ) {
-				double zoomX = getZoom().getX();
-				double zoomY = getZoom().getY();
-
-				double scale = Math.signum( e.getDeltaY() ) < 0 ? negativeZoomFactor : positiveZoomFactor;
-
-				zoomX = scale * zoomX;
-				zoomY = scale * zoomY;
-
-				Point2D mouse = parentToLocal( e.getX(), e.getY() );
-				setZoomAt( mouse.getX(), mouse.getY(), zoomX, zoomY );
-			}
-		} );
 
 		lengthUnitProperty().addListener( ( p, o, n ) -> updateWorldTransforms( n,
 			getDpiX(),
@@ -575,6 +563,21 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		double dx = (x - dragAnchor.getX()) / getLengthUnit().convert( getDpiX() * getZoomX() );
 		double dy = (y - dragAnchor.getY()) / getLengthUnit().convert( getDpiY() * getZoomY() );
 		setViewpoint( dragViewpoint.getX() - dx, dragViewpoint.getY() + dy );
+	}
+
+	private void doOnScroll( ScrollEvent e) {
+		if( e.getDeltaY() != 0.0 ) {
+			double zoomX = getZoom().getX();
+			double zoomY = getZoom().getY();
+
+			double scale = Math.signum( e.getDeltaY() ) < 0 ? negativeZoomFactor : positiveZoomFactor;
+
+			zoomX = scale * zoomX;
+			zoomY = scale * zoomY;
+
+			Point2D mouse = parentToLocal( e.getX(), e.getY() );
+			setZoomAt( mouse.getX(), mouse.getY(), zoomX, zoomY );
+		}
 	}
 
 	private void runPath( Path path ) {
