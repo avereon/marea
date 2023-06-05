@@ -5,7 +5,6 @@ public enum ShapeType {
 	CURVE,
 	ELLIPSE,
 	LINE,
-	MOVE,
 	PATH,
 	QUAD,
 	TEXT
