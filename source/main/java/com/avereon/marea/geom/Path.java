@@ -63,6 +63,11 @@ public class Path implements Shape2d, Shape3d {
 		return this;
 	}
 
+	public Path move( double bx, double by ) {
+		elements.add( new Element( ShapeType.MOVE, new double[]{ bx, by } ) );
+		return this;
+	}
+
 	@Data
 	@RequiredArgsConstructor
 	public static class Element {

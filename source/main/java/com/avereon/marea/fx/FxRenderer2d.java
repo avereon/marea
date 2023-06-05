@@ -587,10 +587,11 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		path.getElements().forEach( e -> {
 			double[] data = e.getData();
 			switch( e.getType() ) {
-				case LINE -> getGraphicsContext2D().lineTo( data[ 0 ], data[ 1 ] );
 				case ARC -> getGraphicsContext2D().arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
-				case QUAD -> getGraphicsContext2D().quadraticCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
 				case CURVE -> getGraphicsContext2D().bezierCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+				case LINE -> getGraphicsContext2D().lineTo( data[ 0 ], data[ 1 ] );
+				case MOVE -> getGraphicsContext2D().moveTo( data[ 0 ], data[ 1 ] );
+				case QUAD -> getGraphicsContext2D().quadraticCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
 			}
 		} );
 	}
