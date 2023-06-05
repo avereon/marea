@@ -33,7 +33,7 @@ public class Path implements Shape2d, Shape3d {
 
 	private final double rotate;
 
-	private final List<Element> elements = new ArrayList<>();
+	private final List<Element> elements;
 
 	public Path( double x, double y ) {
 		this( x, y, 0.0 );
@@ -41,6 +41,13 @@ public class Path implements Shape2d, Shape3d {
 
 	public Path( double x, double y, double rotate ) {
 		this( Point.of( x, y ), rotate );
+	}
+
+	public Path( double[] anchor, double rotate ) {
+		this.anchor = anchor;
+		this.rotate = rotate;
+		this.elements = new ArrayList<>();
+		move( anchor[0], anchor[1] );
 	}
 
 	@Override
@@ -82,14 +89,6 @@ public class Path implements Shape2d, Shape3d {
 		return this;
 	}
 
-	@Data
-	@RequiredArgsConstructor
-	public static class Element {
-
-		private final Command command;
-
-		private final double[] data;
-
-	}
+	public record Element(Command command, double[] data) {}
 
 }

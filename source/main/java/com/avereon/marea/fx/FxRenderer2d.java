@@ -581,12 +581,10 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	private void runPath( Path path ) {
-		double[] a = path.getAnchor();
 		getGraphicsContext2D().beginPath();
-		getGraphicsContext2D().moveTo( a[ 0 ], a[ 1 ] );
 		path.getElements().forEach( e -> {
-			double[] data = e.getData();
-			switch( e.getCommand() ) {
+			double[] data = e.data();
+			switch( e.command() ) {
 				case ARC -> getGraphicsContext2D().arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
 				case CLOSE -> getGraphicsContext2D().closePath();
 				case CURVE -> getGraphicsContext2D().bezierCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
@@ -595,6 +593,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 				case QUAD -> getGraphicsContext2D().quadraticCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
 			}
 		} );
+		getGraphicsContext2D().closePath();
 	}
 
 	private StrokeLineCap getCap( LineCap cap ) {
