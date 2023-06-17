@@ -385,7 +385,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		double[] radius = Vector.scale( arc.getRadius(), 2 );
 
 		worldSetup( arc );
-		getGraphicsContext2D().strokeArc( anchor[ 0 ], anchor[ 1 ], radius[ 0 ], radius[ 1 ], arc.getStart(), -arc.getExtent(), ArcType.OPEN );
+		getGraphicsContext2D().strokeArc( anchor[ 0 ], anchor[ 1 ], radius[ 0 ], radius[ 1 ], -arc.getStart(), -arc.getExtent(), ArcType.OPEN );
 	}
 
 	private void drawEllipse( Ellipse ellipse ) {

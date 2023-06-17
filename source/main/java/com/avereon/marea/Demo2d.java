@@ -116,7 +116,7 @@ public class Demo2d extends Application {
 		renderer.draw( new Line( -0.6, -0.1, -0.4, 0.1 ), orangePen );
 		renderer.draw( new Ellipse( -0.5, 0.5, 0.1, 0.1 ), yellowPen );
 		renderer.draw( new Ellipse( -0.5, 0.5, 0.1, 0.05, 30 ), orangePen );
-		renderer.draw( new Arc( 0, 0.5, 0.1, 0.1, 0, 0, 135 ), orangePen );
+		renderer.draw( new Arc( 0, 0.5, 0.1, 0.1, 0, 45, 90 ), orangePen );
 		renderer.draw( new Text( "Joukowsky", 0.4, 0.2, 0.2, -10 ), orangePen );
 		renderer.draw( new Curve( Point.of( 0.9, 0.4 ), Point.of( 0.9, 0.6 ), Point.of( 1.1, 0.4 ), Point.of( 1.1, 0.6 ) ), orangePen );
 		renderer.draw( new Quad( 1.4, 0.4, 1.5, 0.6, 1.6, 0.4 ), orangePen );
