@@ -22,6 +22,7 @@ import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 @CustomLog
 public class FxRenderer2d extends Canvas implements Renderer2d {
@@ -380,6 +381,10 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		}
 	}
 
+	public <T extends Shape2d> void draw( Collection<T> shapes, Pen pen ) {
+		shapes.forEach( s -> draw( s, pen ) );
+	}
+
 	private void drawArc( Arc arc ) {
 		double[] anchor = Vector.add( arc.getAnchor(), Point.of( -arc.getRadius()[ 0 ], -arc.getRadius()[ 1 ] ) );
 		double[] radius = Vector.scale( arc.getRadius(), 2 );
@@ -449,6 +454,10 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 			case PATH -> fillPath( (Path)shape );
 			case TEXT -> fillText( (Text)shape );
 		}
+	}
+
+	public <T extends Shape2d> void fill( Collection<T> shapes, Pen pen ) {
+		shapes.forEach( s -> fill( s, pen ) );
 	}
 
 	private void fillEllipse( Ellipse ellipse ) {
@@ -565,7 +574,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		setViewpoint( dragViewpoint.getX() - dx, dragViewpoint.getY() + dy );
 	}
 
-	private void doOnScroll( ScrollEvent e) {
+	private void doOnScroll( ScrollEvent e ) {
 		if( e.getDeltaY() != 0.0 ) {
 			double zoomX = getZoom().getX();
 			double zoomY = getZoom().getY();
