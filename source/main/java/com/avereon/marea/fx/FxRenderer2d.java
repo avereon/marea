@@ -507,9 +507,9 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	private static Affine createWorldTransform(
 		LengthUnit lengthUnit, double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double rotate, double width, double height, boolean isFontTransform
 	) {
-		double fontPointSize = 1.0;
+		double scale = 1.0;
 		if( isFontTransform ) {
-			fontPointSize = FONT_POINT_SIZE;
+			scale = FONT_POINT_SIZE;
 			rotate = -rotate;
 		} else {
 			zoomY = -zoomY;
@@ -525,13 +525,13 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		affine.append( Transform.scale( lengthUnit.convert( dpiX ), lengthUnit.convert( dpiY ) ) );
 
 		// Apply the zoom factor
-		affine.append( Transform.scale( zoomX / fontPointSize, zoomY / fontPointSize ) );
+		affine.append( Transform.scale( zoomX / scale, zoomY / scale ) );
 
 		// Rotate the view
-		affine.append( Transform.rotate( rotate, -viewpointX * fontPointSize, viewpointY * fontPointSize ) );
+		affine.append( Transform.rotate( rotate, -viewpointX * scale, viewpointY * scale ) );
 
 		// Center the viewpoint. The viewpoint is given in world coordinates.
-		affine.append( Transform.translate( -viewpointX * fontPointSize, viewpointY * fontPointSize ) );
+		affine.append( Transform.translate( -viewpointX * scale, viewpointY * scale ) );
 
 		return affine;
 	}
