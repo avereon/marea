@@ -50,7 +50,7 @@
 		<curve.version>0.5-SNAPSHOT</curve.version>
 		<zarra.version>0.10-SNAPSHOT</zarra.version>
 		<openjfx.version>21.0.2</openjfx.version>
-		<testfx.version>4.0.16-alpha</testfx.version>
+		<testfx.version>4.0.17</testfx.version>
 	</properties>
 
 	<dependencies>
