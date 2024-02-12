@@ -49,7 +49,7 @@
 		<!-- Runtime dependencies -->
 		<curve.version>0.5-SNAPSHOT</curve.version>
 		<zarra.version>0.10-SNAPSHOT</zarra.version>
-		<openjfx.version>17.0.10</openjfx.version>
+		<openjfx.version>21.0.1</openjfx.version>
 		<testfx.version>4.0.18</testfx.version>
 	</properties>
 
