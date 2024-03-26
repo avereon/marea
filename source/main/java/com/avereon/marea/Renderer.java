@@ -42,6 +42,8 @@ public interface Renderer {
 
 	Point2D getZoom();
 
+	void setZoom( Point2D zoom );
+
 	void setZoom( double scaleX, double scaleY );
 
 	double getZoomX();
@@ -75,6 +77,8 @@ public interface Renderer {
 	DoubleProperty viewpointYProperty();
 
 	Point2D getViewpoint();
+
+	void setViewpoint( Point2D viewpoint );
 
 	void setViewpoint( double x, double y );
 

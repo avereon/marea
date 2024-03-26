@@ -9,6 +9,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -86,12 +87,10 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 		setZoomFactor( DEFAULT_ZOOM_FACTOR );
 
+		// These are the default handlers
 		setOnScroll( this::doOnScroll );
-
 		setOnMousePressed( this::doOnDragBegin );
-
 		setOnMouseDragged( this::doOnDragMouse );
-
 		setOnMouseReleased( this::doOnDragFinish );
 
 		lengthUnitProperty().addListener( ( p, o, n ) -> updateWorldTransforms( n,
@@ -238,6 +237,11 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	@Override
+	public void setZoom( Point2D zoom ) {
+		setZoom( zoom.getX(), zoom.getY() );
+	}
+
+	@Override
 	public void setZoom( double zoomX, double zoomY ) {
 		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), zoomX, zoomY, getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
 		zoomXProperty().set( zoomX );
@@ -302,6 +306,11 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	@Override
+	public void setViewpoint( Point2D viewpoint ) {
+		setViewpoint( viewpoint.getX(), viewpoint.getY() );
+	}
+
+	@Override
 	public void setViewpoint( double viewpointX, double viewpointY ) {
 		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), getZoomY(), viewpointX, viewpointY, getViewRotate(), getWidth(), getHeight() );
 		viewpointXProperty().set( viewpointX );
@@ -359,9 +368,23 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	@Override
+	public Point3D localToParent( double x, double y, double z ) {
+		return worldTransform.transform( x, y, z );
+	}
+
+	@Override
 	public Point2D parentToLocal( double x, double y ) {
 		try {
 			return worldTransform.inverseTransform( x, y );
+		} catch( NonInvertibleTransformException exception ) {
+			return null;
+		}
+	}
+
+	@Override
+	public Point3D parentToLocal( double x, double y, double z ) {
+		try {
+			return worldTransform.inverseTransform( x, y, z );
 		} catch( NonInvertibleTransformException exception ) {
 			return null;
 		}
