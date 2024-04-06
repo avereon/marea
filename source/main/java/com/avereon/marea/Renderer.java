@@ -368,12 +368,21 @@ public interface Renderer {
 	void drawVRule( double position, Pen pen );
 
 	/**
-	 * Convert an x, y point in local coordinates to parent coordinates.
+	 * Convert an x, y point in local coordinates to a Point2D in parent
+	 * coordinates.
 	 *
 	 * @param x The x coordinate in local coordinates.
 	 * @param y The y coordinate in local coordinates.
 	 */
 	Point2D localToParent( double x, double y );
+
+	default Point2D localToParent( Point2D point ) {
+		return localToParent( point.getX(), point.getY() );
+	}
+
+	default Point2D localToParent2d( Point3D point ) {
+		return localToParent( point.getX(), point.getY() );
+	}
 
 	/**
 	 * Convert an x, y, z point in local coordinates to parent coordinates.
@@ -384,6 +393,14 @@ public interface Renderer {
 	 */
 	Point3D localToParent( double x, double y, double z );
 
+	default Point3D localToParent( Point3D point3d ) {
+		return localToParent( point3d.getX(), point3d.getY(), point3d.getZ() );
+	}
+
+	default Point3D localToParent3d( Point2D point ) {
+		return localToParent( point.getX(), point.getY(), 0 );
+	}
+
 	/**
 	 * Convert an x, y point in parent coordinates to local coordinates.
 	 *
@@ -391,6 +408,14 @@ public interface Renderer {
 	 * @param y The y coordinate in parent coordinates.
 	 */
 	Point2D parentToLocal( double x, double y );
+
+	default Point2D parentToLocal( Point2D point ) {
+		return parentToLocal( point.getX(), point.getY() );
+	}
+
+	default Point2D parentToLocal2d( Point3D point ) {
+		return parentToLocal( point.getX(), point.getY() );
+	}
 
 	/**
 	 * Convert an x, y, z point in parent coordinates to local coordinates.
@@ -400,5 +425,13 @@ public interface Renderer {
 	 * @param z The z coordinate in parent coordinates.
 	 */
 	Point3D parentToLocal( double x, double y, double z );
+
+	default Point3D parentToLocal( Point3D point3d ) {
+		return parentToLocal( point3d.getX(), point3d.getY(), point3d.getZ() );
+	}
+
+	default Point3D parentToLocal3d( Point2D point ) {
+		return parentToLocal( point.getX(), point.getY(), 0 );
+	}
 
 }
