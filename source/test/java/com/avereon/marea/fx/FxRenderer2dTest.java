@@ -1,6 +1,6 @@
-package com.avereon.marea;
+package com.avereon.marea.fx;
 
-import com.avereon.marea.fx.FxRenderer2d;
+import com.avereon.marea.RenderUnit;
 import javafx.geometry.Point2D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ public class FxRenderer2dTest {
 	void setup() {
 		renderer = new FxRenderer2d( 200, 200 );
 		// These unit tests are simpler using the INCH length unit
-		renderer.setLengthUnit( LengthUnit.INCH );
+		renderer.setLengthUnit( RenderUnit.INCH );
 	}
 
 	@Test
@@ -25,37 +25,37 @@ public class FxRenderer2dTest {
 
 	@Test
 	void testLocalToParentWithDefaultWorldTransform() {
-		assertThat( renderer.localToParent( 1, 1 ) ).isEqualTo( new Point2D( 196, 4 ) );
+		assertThat( renderer.localToParent( 1, 1 ) ).isEqualTo( new Point2D( 172, 28 ) );
 	}
 
 	@Test
 	void testParentToLocalWithDefaultWorldTransform() {
-		assertThat( renderer.parentToLocal( 196, 4 ) ).isEqualTo( new Point2D( 0.9999999999999998, 1 ) );
+		assertThat( renderer.parentToLocal( 196, 4 ) ).isEqualTo( new Point2D( 1.333333333333333, 1.3333333333333333 ) );
 	}
 
 	@Test
 	void testLengthUnitChangeUpdatesWorldTransform() {
-		double p = LengthUnit.CENTIMETER.convert( 96.0 );
-		renderer.setLengthUnit( LengthUnit.CENTIMETER );
+		double p = RenderUnit.CENTIMETER.convert( FxRenderer2d.DEFAULT_PPI );
+		renderer.setLengthUnit( RenderUnit.CENTIMETER );
 		assertThat( renderer.localToParent( 1, 1 ) ).isEqualTo( new Point2D( 100 + p, 100 - p ) );
 	}
 
 	@Test
 	void testDpiChangeUpdatesWorldTransform() {
-		renderer.setDpi( 72, 72 );
+		renderer.setPpi( 72, 72 );
 		assertThat( renderer.localToParent( 1, 1 ) ).isEqualTo( new Point2D( 172, 28 ) );
 	}
 
 	@Test
 	void testZoomChangeUpdatesWorldTransform() {
 		renderer.setZoom( 2, 2 );
-		assertThat( renderer.localToParent( 1, 1 ) ).isEqualTo( new Point2D( 292, -92 ) );
+		assertThat( renderer.localToParent( 1, 1 ) ).isEqualTo( new Point2D( 244, -44 ) );
 	}
 
 	@Test
 	void testViewpointChangeUpdatesWorldTransform() {
 		renderer.setViewpoint( -1, 1 );
-		assertThat( renderer.localToParent( 1, 1 ) ).isEqualTo( new Point2D( 292, 100 ) );
+		assertThat( renderer.localToParent( 1, 1 ) ).isEqualTo( new Point2D( 244, 100 ) );
 	}
 
 }

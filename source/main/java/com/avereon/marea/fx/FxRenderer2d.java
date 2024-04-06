@@ -28,13 +28,13 @@ import java.util.Collection;
 @CustomLog
 public class FxRenderer2d extends Canvas implements Renderer2d {
 
-	public static final LengthUnit DEFAULT_LENGTH_UNIT = LengthUnit.CENTIMETER;
+	public static final RenderUnit DEFAULT_LENGTH_UNIT = RenderUnit.CENTIMETER;
 
-	public static final double DEFAULT_DPI = 96;
+	public static final double DEFAULT_PPI = 72;
 
 	public static final double DEFAULT_ZOOM = 1.0;
 
-	public static final double DEFAULT_ZOOM_FACTOR = 0.1;
+	public static final double DEFAULT_ZOOM_STEP_FACTOR = 0.1;
 
 	/**
 	 * This value needs to be large enough to allow small font heights to be
@@ -52,11 +52,11 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	private Affine worldTextTransform = new Affine( Transform.scale( 1, 1 ) );
 
-	private ObjectProperty<LengthUnit> lengthUnit;
+	private ObjectProperty<RenderUnit> lengthUnit;
 
-	private DoubleProperty dpiX;
+	private DoubleProperty ppiX;
 
-	private DoubleProperty dpiY;
+	private DoubleProperty ppiY;
 
 	private DoubleProperty zoomX;
 
@@ -68,7 +68,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	private DoubleProperty viewRotate;
 
-	private DoubleProperty zoomFactor;
+	private DoubleProperty zoomStep;
 
 	private double positiveZoomFactor;
 
@@ -85,7 +85,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	public FxRenderer2d( double width, double height ) {
 		super( width, height );
 
-		setZoomFactor( DEFAULT_ZOOM_FACTOR );
+		setZoomStep( DEFAULT_ZOOM_STEP_FACTOR );
 
 		// These are the default handlers
 		setOnScroll( this::doOnScroll );
@@ -94,8 +94,8 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		setOnMouseReleased( this::doOnDragFinish );
 
 		lengthUnitProperty().addListener( ( p, o, n ) -> updateWorldTransforms( n,
-			getDpiX(),
-			getDpiY(),
+			getPpiX(),
+			getPpiY(),
 			getZoomX(),
 			getZoomY(),
 			getViewpointX(),
@@ -105,8 +105,8 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 			getHeight()
 		) );
 		widthProperty().addListener( ( p, o, n ) -> updateWorldTransforms( getLengthUnit(),
-			getDpiX(),
-			getDpiY(),
+			getPpiX(),
+			getPpiY(),
 			getZoomX(),
 			getZoomY(),
 			getViewpointX(),
@@ -116,8 +116,8 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 			getHeight()
 		) );
 		heightProperty().addListener( ( p, o, n ) -> updateWorldTransforms( getLengthUnit(),
-			getDpiX(),
-			getDpiY(),
+			getPpiX(),
+			getPpiY(),
 			getZoomX(),
 			getZoomY(),
 			getViewpointX(),
@@ -127,7 +127,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 			n.doubleValue()
 		) );
 
-		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
 	}
 
 	@Override
@@ -137,66 +137,72 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	@Override
-	public LengthUnit getLengthUnit() {
+	public RenderUnit getLengthUnit() {
 		return lengthUnit == null ? DEFAULT_LENGTH_UNIT : lengthUnit.get();
 	}
 
 	@Override
-	public void setLengthUnit( LengthUnit unit ) {
+	public void setLengthUnit( RenderUnit unit ) {
 		lengthUnitProperty().set( unit );
 	}
 
 	@Override
-	public ObjectProperty<LengthUnit> lengthUnitProperty() {
+	public ObjectProperty<RenderUnit> lengthUnitProperty() {
 		if( lengthUnit == null ) lengthUnit = new SimpleObjectProperty<>( DEFAULT_LENGTH_UNIT );
 		return lengthUnit;
 	}
 
 	@Override
-	public double getDpiX() {
-		return dpiX == null ? DEFAULT_DPI : dpiXProperty().getValue();
+	public double getPpiX() {
+		return ppiX == null ? DEFAULT_PPI : ppiXProperty().getValue();
 	}
 
 	@Override
-	public void setDpiX( double dpiX ) {
-		updateWorldTransforms( getLengthUnit(), dpiX, getDpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
-		dpiXProperty().set( dpiX );
+	public void setPpiX( double ppiX ) {
+		updateWorldTransforms( getLengthUnit(), ppiX, getPpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
+		ppiXProperty().set( ppiX );
 	}
 
 	@Override
-	public DoubleProperty dpiXProperty() {
-		if( dpiX == null ) dpiX = new SimpleDoubleProperty( DEFAULT_DPI );
-		return dpiX;
+	public DoubleProperty ppiXProperty() {
+		if( ppiX == null ) ppiX = new SimpleDoubleProperty( DEFAULT_PPI );
+		return ppiX;
 	}
 
 	@Override
-	public double getDpiY() {
-		return dpiY == null ? DEFAULT_DPI : dpiYProperty().getValue();
+	public double getPpiY() {
+		return ppiY == null ? DEFAULT_PPI : ppiYProperty().getValue();
 	}
 
 	@Override
-	public void setDpiY( double dpiY ) {
-		updateWorldTransforms( getLengthUnit(), getDpiX(), dpiY, getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
-		dpiYProperty().set( dpiY );
+	public void setPpiY( double ppiY ) {
+		updateWorldTransforms( getLengthUnit(), getPpiX(), ppiY, getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
+		ppiYProperty().set( ppiY );
 	}
 
 	@Override
-	public DoubleProperty dpiYProperty() {
-		if( dpiY == null ) dpiY = new SimpleDoubleProperty( DEFAULT_DPI );
-		return dpiY;
+	public DoubleProperty ppiYProperty() {
+		if( ppiY == null ) ppiY = new SimpleDoubleProperty( DEFAULT_PPI );
+		return ppiY;
 	}
 
-	public Point2D getDpi() {
-		return new Point2D( getDpiX(), getDpiY() );
-	}
-
+	/**
+	 * Small optimization over the default implementation by updating the world
+	 * transforms only once.
+	 *
+	 * @param dpiX The DPI in the x direction.
+	 * @param dpiY The DPI in the y direction.
+	 */
 	@Override
-	public void setDpi( double dpiX, double dpiY ) {
+	public void setPpi( double dpiX, double dpiY ) {
 		updateWorldTransforms( getLengthUnit(), dpiX, dpiY, getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
-		dpiXProperty().set( dpiX );
-		dpiYProperty().set( dpiY );
+		ppiXProperty().set( dpiX );
+		ppiYProperty().set( dpiY );
 	}
 
+	/**
+	 * Get the zoom factor in the x direction.
+	 */
 	@Override
 	public double getZoomX() {
 		return zoomX == null ? DEFAULT_ZOOM : zoomXProperty().getValue();
@@ -204,7 +210,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setZoomX( double zoomX ) {
-		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), zoomX, getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), zoomX, getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
 		zoomXProperty().set( zoomX );
 	}
 
@@ -221,7 +227,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setZoomY( double zoomY ) {
-		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), zoomY, getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), getZoomX(), zoomY, getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
 		zoomYProperty().set( zoomY );
 	}
 
@@ -236,34 +242,36 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		return new Point2D( getZoomX(), getZoomY() );
 	}
 
-	@Override
-	public void setZoom( Point2D zoom ) {
-		setZoom( zoom.getX(), zoom.getY() );
-	}
-
+	/**
+	 * A small optimization over the default implementation by updating the world
+	 * transforms only once.
+	 *
+	 * @param zoomX The zoom factor in the x direction.
+	 * @param zoomY The zoom factor in the y direction.
+	 */
 	@Override
 	public void setZoom( double zoomX, double zoomY ) {
-		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), zoomX, zoomY, getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), zoomX, zoomY, getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
 		zoomXProperty().set( zoomX );
 		zoomYProperty().set( zoomY );
 	}
 
 	@Override
-	public double getZoomFactor() {
-		return zoomFactor == null ? DEFAULT_ZOOM_FACTOR : zoomFactorProperty().getValue();
+	public double getZoomStep() {
+		return zoomStep == null ? DEFAULT_ZOOM_STEP_FACTOR : zoomStepProperty().getValue();
 	}
 
 	@Override
-	public void setZoomFactor( double zoomFactor ) {
-		zoomFactorProperty().set( zoomFactor );
-		positiveZoomFactor = 1.0 + zoomFactor;
+	public void setZoomStep( double zoomStep ) {
+		zoomStepProperty().set( zoomStep );
+		positiveZoomFactor = 1.0 + zoomStep;
 		negativeZoomFactor = 1.0 / positiveZoomFactor;
 	}
 
 	@Override
-	public DoubleProperty zoomFactorProperty() {
-		if( zoomFactor == null ) zoomFactor = new SimpleDoubleProperty( DEFAULT_ZOOM_FACTOR );
-		return zoomFactor;
+	public DoubleProperty zoomStepProperty() {
+		if( zoomStep == null ) zoomStep = new SimpleDoubleProperty( DEFAULT_ZOOM_STEP_FACTOR );
+		return zoomStep;
 	}
 
 	@Override
@@ -273,7 +281,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setViewpointX( double viewpointX ) {
-		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), getZoomY(), viewpointX, getViewpointY(), getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), getZoomX(), getZoomY(), viewpointX, getViewpointY(), getViewRotate(), getWidth(), getHeight() );
 		viewpointXProperty().set( viewpointX );
 	}
 
@@ -290,7 +298,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setViewpointY( double viewpointY ) {
-		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointX(), viewpointY, getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), getZoomX(), getZoomY(), getViewpointX(), viewpointY, getViewRotate(), getWidth(), getHeight() );
 		viewpointYProperty().set( viewpointY );
 	}
 
@@ -300,19 +308,16 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		return viewpointY;
 	}
 
-	@Override
-	public Point2D getViewpoint() {
-		return new Point2D( getViewpointX(), getViewpointY() );
-	}
-
-	@Override
-	public void setViewpoint( Point2D viewpoint ) {
-		setViewpoint( viewpoint.getX(), viewpoint.getY() );
-	}
-
+	/**
+	 * A small optimization over the default implementation by updating the world
+	 * transforms only once.
+	 *
+	 * @param viewpointX The viewpoint in the x direction.
+	 * @param viewpointY The viewpoint in the y direction.
+	 */
 	@Override
 	public void setViewpoint( double viewpointX, double viewpointY ) {
-		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), getZoomY(), viewpointX, viewpointY, getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), getZoomX(), getZoomY(), viewpointX, viewpointY, getViewRotate(), getWidth(), getHeight() );
 		viewpointXProperty().set( viewpointX );
 		viewpointYProperty().set( viewpointY );
 	}
@@ -324,7 +329,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 
 	@Override
 	public void setViewRotate( double viewRotate ) {
-		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), viewRotate, getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), viewRotate, getWidth(), getHeight() );
 		viewRotateProperty().set( viewRotate );
 	}
 
@@ -339,7 +344,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		double y = viewpointY + (getViewpointY() - viewpointY) * getZoomY() / zoomY;
 
 		// Set the new zoom and viewpoint
-		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), zoomX, zoomY, x, y, getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), zoomX, zoomY, x, y, getViewRotate(), getWidth(), getHeight() );
 		viewpointXProperty().set( x );
 		viewpointYProperty().set( y );
 		zoomXProperty().set( zoomX );
@@ -522,13 +527,13 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		getGraphicsContext2D().setFont( new Font( text.getHeight() * FONT_POINT_SIZE ) );
 	}
 
-	private void updateWorldTransforms( LengthUnit lengthUnit, double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double rotate, double width, double height ) {
-		worldTransform = createWorldTransform( lengthUnit, dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, rotate, width, height, false );
-		worldTextTransform = createWorldTransform( lengthUnit, dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, rotate, width, height, true );
+	private void updateWorldTransforms( RenderUnit unit, double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double rotate, double width, double height ) {
+		worldTransform = createWorldTransform( unit, dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, rotate, width, height, false );
+		worldTextTransform = createWorldTransform( unit, dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, rotate, width, height, true );
 	}
 
 	private static Affine createWorldTransform(
-		LengthUnit lengthUnit, double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double rotate, double width, double height, boolean isFontTransform
+		RenderUnit unit, double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double rotate, double width, double height, boolean isFontTransform
 	) {
 		double scale = 1.0;
 		if( isFontTransform ) {
@@ -545,7 +550,7 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 		affine.append( Transform.translate( 0.5 * width, 0.5 * height ) );
 
 		// Scale for screen DPI
-		affine.append( Transform.scale( lengthUnit.convert( dpiX ), lengthUnit.convert( dpiY ) ) );
+		affine.append( Transform.scale( unit.convert( dpiX ), unit.convert( dpiY ) ) );
 
 		// Apply the zoom factor
 		affine.append( Transform.scale( zoomX / scale, zoomY / scale ) );
@@ -592,8 +597,8 @@ public class FxRenderer2d extends Canvas implements Renderer2d {
 	}
 
 	private void dragMove( double x, double y ) {
-		double dx = (x - dragAnchor.getX()) / getLengthUnit().convert( getDpiX() * getZoomX() );
-		double dy = (y - dragAnchor.getY()) / getLengthUnit().convert( getDpiY() * getZoomY() );
+		double dx = (x - dragAnchor.getX()) / getLengthUnit().convert( getPpiX() * getZoomX() );
+		double dy = (y - dragAnchor.getY()) / getLengthUnit().convert( getPpiY() * getZoomY() );
 		setViewpoint( dragViewpoint.getX() - dx, dragViewpoint.getY() + dy );
 	}
 

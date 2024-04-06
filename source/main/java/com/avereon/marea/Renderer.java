@@ -3,101 +3,402 @@ package com.avereon.marea;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 
+/**
+ * The interface that all raster renderers must implement.
+ */
 public interface Renderer {
 
+	/**
+	 * Get the width of the renderer in pixels.
+	 *
+	 * @return The width of the renderer in pixels.
+	 */
 	double getWidth();
 
+	/**
+	 * Set the width of the renderer in pixels.
+	 *
+	 * @param width The width of the renderer in pixels.
+	 */
 	void setWidth( double width );
 
+	/**
+	 * Get the renderer width property.
+	 *
+	 * @return The width property.
+	 */
 	DoubleProperty widthProperty();
 
+	/**
+	 * Get the height of the renderer in pixels.
+	 *
+	 * @return The height of the renderer in pixels.
+	 */
 	double getHeight();
 
+	/**
+	 * Set the height of the renderer in pixels.
+	 *
+	 * @param height The height of the renderer in pixels.
+	 */
 	void setHeight( double height );
 
+	/**
+	 * Get the renderer height property.
+	 *
+	 * @return The height property.
+	 */
 	DoubleProperty heightProperty();
 
-	LengthUnit getLengthUnit();
+	/**
+	 * Get the length unit used by the renderer.
+	 *
+	 * @return The length unit used by the renderer.
+	 */
+	RenderUnit getLengthUnit();
 
-	void setLengthUnit( LengthUnit unit );
+	/**
+	 * Set the length unit used by the renderer.
+	 *
+	 * @param unit The length unit used by the renderer.
+	 */
+	void setLengthUnit( RenderUnit unit );
 
-	ObjectProperty<LengthUnit> lengthUnitProperty();
+	/**
+	 * Get the length unit property.
+	 *
+	 * @return The length unit property.
+	 */
+	ObjectProperty<RenderUnit> lengthUnitProperty();
 
-	Point2D getDpi();
+	/**
+	 * Convenience method to get the PPI as a point.
+	 *
+	 * @return The renderer PPI as a point.
+	 */
+	default Point2D getPpi() {
+		return new Point2D( getPpiX(), getPpiY() );
+	}
 
-	void setDpi( double dpiX, double dpiY );
+	/**
+	 * Convenience method to set both the x and y PPI properties of the renderer.
+	 *
+	 * @param ppi The PPI as a point.
+	 */
+	default void setPpi( Point2D ppi ) {
+		setPpi( ppi.getX(), ppi.getY() );
+	}
 
-	double getDpiX();
+	/**
+	 * Convenience method to set both the x and y PPI properties of the renderer.
+	 *
+	 * @param ppiX The PPI in the x direction.
+	 * @param ppiY The PPI in the y direction.
+	 */
+	default void setPpi( double ppiX, double ppiY ) {
+		setPpiX( ppiX );
+		setPpiY( ppiY );
+	}
 
-	void setDpiX( double dpiX );
+	/**
+	 * Get the PPI in the x direction.
+	 *
+	 * @return The PPI in the x direction.
+	 */
+	double getPpiX();
 
-	DoubleProperty dpiXProperty();
+	/**
+	 * Set the PPI in the x direction.
+	 *
+	 * @param ppiX The PPI in the x direction.
+	 */
+	void setPpiX( double ppiX );
 
-	double getDpiY();
+	/**
+	 * Get the PPI in the x direction property.
+	 *
+	 * @return The PPI in the x direction property.
+	 */
+	DoubleProperty ppiXProperty();
 
-	void setDpiY( double dpiY );
+	/**
+	 * Get the PPI in the y direction.
+	 *
+	 * @return The PPI in the y direction.
+	 */
+	double getPpiY();
 
-	DoubleProperty dpiYProperty();
+	/**
+	 * Set the PPI in the y direction.
+	 *
+	 * @param ppiY The PPI in the y direction.
+	 */
+	void setPpiY( double ppiY );
 
-	Point2D getZoom();
+	/**
+	 * Get the PPI in the y direction property.
+	 *
+	 * @return The PPI in the y direction property.
+	 */
+	DoubleProperty ppiYProperty();
 
-	void setZoom( Point2D zoom );
+	/**
+	 * Convenience method to get the zoom factor in both the x and y direction as
+	 * a point.
+	 *
+	 * @return The zoom factor as a point.
+	 */
+	default Point2D getZoom() {
+		return new Point2D( getZoomX(), getZoomY() );
+	}
 
-	void setZoom( double scaleX, double scaleY );
+	/**
+	 * Convenience method to set both the x and y zoom properties of the renderer.
+	 *
+	 * @param zoom The zoom factor as a point.
+	 */
+	default void setZoom( Point2D zoom ) {
+		setZoom( zoom.getX(), zoom.getY() );
+	}
 
+	/**
+	 * Convenience method to set both the x and y zoom properties of the renderer.
+	 *
+	 * @param zoomX The zoom factor in the x direction.
+	 * @param zoomY The zoom factor in the y direction.
+	 */
+	default void setZoom( double zoomX, double zoomY ) {
+		setZoomX( zoomX );
+		setZoomY( zoomY );
+	}
+
+	/**
+	 * Get the zoom factor in the x direction.
+	 *
+	 * @return The zoom factor in the x direction.
+	 */
 	double getZoomX();
 
+	/**
+	 * Set the zoom factor in the x direction.
+	 *
+	 * @param zoomX The zoom factor in the x direction.
+	 */
 	void setZoomX( double zoomX );
 
+	/**
+	 * Get the zoom factor in the x direction property.
+	 *
+	 * @return The zoom factor in the x direction property.
+	 */
 	DoubleProperty zoomXProperty();
 
+	/**
+	 * Get the zoom factor in the y direction.
+	 *
+	 * @return The zoom factor in the y direction.
+	 */
 	double getZoomY();
 
+	/**
+	 * Set the zoom factor in the y direction.
+	 *
+	 * @param zoomY The zoom factor in the y direction.
+	 */
 	void setZoomY( double zoomY );
 
+	/**
+	 * Get the zoom factor in the y direction property.
+	 *
+	 * @return The zoom factor in the y direction property.
+	 */
 	DoubleProperty zoomYProperty();
 
-	double getZoomFactor();
+	/**
+	 * Get the zoom step. The zoom step is the multiplier applied to the zoom
+	 * in both the x and y directions when zooming relative to the
+	 * current zoom (in or out).
+	 *
+	 * @return The zoom factor.
+	 */
+	double getZoomStep();
 
-	void setZoomFactor( double zoomFactor );
+	/**
+	 * Set the zoom factor.
+	 *
+	 * @param zoomStep The zoom factor.
+	 */
+	void setZoomStep( double zoomStep );
 
-	DoubleProperty zoomFactorProperty();
+	/**
+	 * Get the zoom factor property.
+	 *
+	 * @return The zoom factor property.
+	 */
+	DoubleProperty zoomStepProperty();
 
+	/**
+	 * Get the viewpoint in the x direction in world units.
+	 *
+	 * @return The viewpoint in the x direction.
+	 */
 	double getViewpointX();
 
+	/**
+	 * Set the viewpoint in the x direction in world units.
+	 *
+	 * @param viewpointX The viewpoint in the x direction.
+	 */
 	void setViewpointX( double viewpointX );
 
+	/**
+	 * Get the viewpoint in the x direction property.The property value is in
+	 * world units.
+	 *
+	 * @return The viewpoint in the x direction property.
+	 */
 	DoubleProperty viewpointXProperty();
 
+	/**
+	 * Get the viewpoint in the y direction in world units.
+	 *
+	 * @return The viewpoint in the y direction.
+	 */
 	double getViewpointY();
 
+	/**
+	 * Set the viewpoint in the y direction in world units.
+	 *
+	 * @param viewpointY The viewpoint in the y direction.
+	 */
 	void setViewpointY( double viewpointY );
 
+	/**
+	 * Get the viewpoint in the y direction property. The property value is in
+	 * world units.
+	 *
+	 * @return The viewpoint in the y direction property.
+	 */
 	DoubleProperty viewpointYProperty();
 
-	Point2D getViewpoint();
+	/**
+	 * Convenience method to get the viewpoint as a point in world units.
+	 *
+	 * @return The viewpoint as a point.
+	 */
+	default Point2D getViewpoint() {
+		return new Point2D( getViewpointX(), getViewpointY() );
+	}
 
-	void setViewpoint( Point2D viewpoint );
+	/**
+	 * Convenience method to set both the x and y viewpoint properties of the
+	 * renderer in world units.
+	 *
+	 * @param viewpoint The viewpoint as a point.
+	 */
+	default void setViewpoint( Point2D viewpoint ) {
+		setViewpoint( viewpoint.getX(), viewpoint.getY() );
+	}
 
-	void setViewpoint( double x, double y );
+	/**
+	 * Convenience method to set both the x and y viewpoint properties of the
+	 * renderer in world units.
+	 *
+	 * @param x The viewpoint in the x direction.
+	 * @param y The viewpoint in the y direction.
+	 */
+	default void setViewpoint( double x, double y ) {
+		setViewpointX( x );
+		setViewpointY( y );
+	}
 
+	/**
+	 * Get the view rotation angle in degrees.
+	 *
+	 * @return The viewpoint in the z direction.
+	 */
 	double getViewRotate();
 
+	/**
+	 * Set the view rotation angle in degrees.
+	 *
+	 * @param viewRotate The view rotation angle in degrees.
+	 */
 	void setViewRotate( double viewRotate );
 
+	/**
+	 * Get the view rotation angle in degrees property.
+	 *
+	 * @return The view rotation angle in degrees property.
+	 */
 	DoubleProperty viewRotateProperty();
 
+	/**
+	 * Convenience method to set the view point and zoom values in a single call.
+	 *
+	 * @param x The viewpoint in the x direction in world units.
+	 * @param y The viewpoint in the y direction in world units.
+	 * @param zoomX The zoom factor in the x direction.
+	 * @param zoomY The zoom factor in the y direction.
+	 */
 	void setZoomAt( double x, double y, double zoomX, double zoomY );
 
+	/**
+	 * Clear the rendering buffer. This is typically called before rendering new
+	 * geometry.
+	 */
 	void clear();
 
+	/**
+	 * Draw a horizontal line on the renderer.
+	 *
+	 * @param position The position of the line in parent coordinates.
+	 * @param pen The pen to use to draw the line.
+	 */
 	void drawHRule( double position, Pen pen );
 
+	/**
+	 * Draw a vertical line on the renderer.
+	 *
+	 * @param position The position of the line in parent coordinates.
+	 * @param pen The pen to use to draw the line.
+	 */
 	void drawVRule( double position, Pen pen );
 
+	/**
+	 * Convert an x, y point in local coordinates to parent coordinates.
+	 *
+	 * @param x The x coordinate in local coordinates.
+	 * @param y The y coordinate in local coordinates.
+	 */
 	Point2D localToParent( double x, double y );
 
+	/**
+	 * Convert an x, y, z point in local coordinates to parent coordinates.
+	 *
+	 * @param x The x coordinate in local coordinates.
+	 * @param y The y coordinate in local coordinates.
+	 * @param z The z coordinate in local coordinates.
+	 */
+	Point3D localToParent( double x, double y, double z );
+
+	/**
+	 * Convert an x, y point in parent coordinates to local coordinates.
+	 *
+	 * @param x The x coordinate in parent coordinates.
+	 * @param y The y coordinate in parent coordinates.
+	 */
 	Point2D parentToLocal( double x, double y );
+
+	/**
+	 * Convert an x, y, z point in parent coordinates to local coordinates.
+	 *
+	 * @param x The x coordinate in parent coordinates.
+	 * @param y The y coordinate in parent coordinates.
+	 * @param z The z coordinate in parent coordinates.
+	 */
+	Point3D parentToLocal( double x, double y, double z );
 
 }
