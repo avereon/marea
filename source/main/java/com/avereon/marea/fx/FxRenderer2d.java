@@ -24,9 +24,10 @@ import lombok.CustomLog;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @CustomLog
-public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
+public class FxRenderer2d extends Canvas implements ShapeRenderer2d, DirectRenderer2d {
 
 	public static final RenderUnit DEFAULT_LENGTH_UNIT = RenderUnit.CENTIMETER;
 
@@ -442,11 +443,34 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 		getGraphicsContext2D().stroke();
 	}
 
+	@Override
+	public void drawPath( List<Path.Element> path, boolean closed ) {
+		getGraphicsContext2D().beginPath();
+		runPath( path, closed );
+		getGraphicsContext2D().stroke();
+	}
+
 	public void drawText( double x, double y, double height, double rotate, String text, Font font ) {
 		getGraphicsContext2D().save();
 		useFontScales( x, y, height, rotate, font );
 		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, new double[]{ x, y } ) );
 		getGraphicsContext2D().strokeText( text, x, y );
+		getGraphicsContext2D().restore();
+	}
+
+	@Override
+	public void fillPath( List<Path.Element> path, boolean closed ) {
+		getGraphicsContext2D().beginPath();
+		runPath( path, closed );
+		getGraphicsContext2D().fill();
+	}
+
+	@Override
+	public void fillText( double x, double y, double height, double rotate, String text, Font font ) {
+		getGraphicsContext2D().save();
+		useFontScales( x, y, height, rotate, font );
+		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, new double[]{ x, y } ) );
+		getGraphicsContext2D().fillText( text, x, y );
 		getGraphicsContext2D().restore();
 	}
 
@@ -519,7 +543,7 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 
 	private void drawPath( Path path ) {
 		worldSetup( path );
-		runPath( path );
+		runPath( path.getElements(), path.isClosed() );
 		getGraphicsContext2D().stroke();
 	}
 
@@ -553,7 +577,7 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 
 	private void fillPath( Path path ) {
 		worldSetup( path );
-		runPath( path );
+		runPath( path.getElements(), path.isClosed() );
 		getGraphicsContext2D().fill();
 	}
 
@@ -586,7 +610,7 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 		if( getGraphicsContext2D().getLineDashes() != null ) getGraphicsContext2D().setLineDashes( Arrays.stream( getGraphicsContext2D().getLineDashes() ).map( d -> d * FONT_POINT_SIZE ).toArray() );
 		getGraphicsContext2D().setLineDashOffset( getGraphicsContext2D().getLineDashOffset() * FONT_POINT_SIZE );
 		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, Vector.scale( Vector.of( x, y ), FONT_POINT_SIZE, -FONT_POINT_SIZE ) ) );
-		getGraphicsContext2D().setFont( Font.toFxFont((font == null ? new Font(): font).derive( height * FONT_POINT_SIZE )) );
+		getGraphicsContext2D().setFont( Font.toFxFont( (font == null ? new Font() : font).derive( height * FONT_POINT_SIZE ) ) );
 	}
 
 	private void updateWorldTransforms( RenderUnit unit, double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double rotate, double width, double height ) {
@@ -679,9 +703,9 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 		}
 	}
 
-	private void runPath( Path path ) {
+	private void runPath( List<Path.Element> elements, boolean closed ) {
 		getGraphicsContext2D().beginPath();
-		path.getElements().forEach( e -> {
+		elements.forEach( e -> {
 			double[] data = e.data();
 			switch( e.command() ) {
 				case ARC -> getGraphicsContext2D().arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
@@ -692,7 +716,7 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 				case QUAD -> getGraphicsContext2D().quadraticCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
 			}
 		} );
-		getGraphicsContext2D().closePath();
+		if( closed ) getGraphicsContext2D().closePath();
 	}
 
 	private StrokeLineCap getCap( LineCap cap ) {

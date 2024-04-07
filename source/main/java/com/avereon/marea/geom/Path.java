@@ -35,6 +35,8 @@ public class Path implements Shape2d, Shape3d {
 
 	private final List<Element> elements;
 
+	private final boolean closed;
+
 	public Path( double x, double y ) {
 		this( x, y, 0.0 );
 	}
@@ -44,10 +46,15 @@ public class Path implements Shape2d, Shape3d {
 	}
 
 	public Path( double[] anchor, double rotate ) {
+		this( anchor, rotate, false );
+	}
+
+	public Path( double[] anchor, double rotate, boolean closed ) {
 		this.anchor = anchor;
 		this.rotate = rotate;
 		this.elements = new ArrayList<>();
-		move( anchor[0], anchor[1] );
+		this.closed = closed;
+		move( anchor[ 0 ], anchor[ 1 ] );
 	}
 
 	@Override
