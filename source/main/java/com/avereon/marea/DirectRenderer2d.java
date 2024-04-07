@@ -5,7 +5,7 @@ import javafx.scene.paint.Paint;
 
 import java.util.List;
 
-public interface DirectRenderer2d {
+public interface DirectRenderer2d extends Renderer {
 
 	void setPen( Paint paint, double width, LineCap cap, LineJoin join, double[] dashes, double offset );
 

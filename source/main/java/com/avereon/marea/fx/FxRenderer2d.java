@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.List;
 
 @CustomLog
-public class FxRenderer2d extends Canvas implements ShapeRenderer2d, DirectRenderer2d {
+public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRenderer2d {
 
 	public static final RenderUnit DEFAULT_LENGTH_UNIT = RenderUnit.CENTIMETER;
 
