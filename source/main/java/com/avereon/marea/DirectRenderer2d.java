@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface DirectRenderer2d extends Renderer {
 
-	void setPen( Paint paint, double width, LineCap cap, LineJoin join, double[] dashes, double offset );
+	void setDrawPen( Paint paint, double width, LineCap cap, LineJoin join, double[] dashes, double offset );
+
+	void setFillPen( Paint paint );
 
 	void drawLine( double x1, double y1, double x2, double y2 );
 
@@ -23,7 +25,9 @@ public interface DirectRenderer2d extends Renderer {
 
 	void drawText( double x, double y, double height, double rotate, String text, Font font );
 
-	void fillPath( List<Path.Element> path, boolean closed );
+	void fillEllipse( double cx, double cy, double rx, double ry, double rotation );
+
+	void fillPath( List<Path.Element> path );
 
 	void fillText( double x, double y, double height, double rotate, String text, Font font );
 

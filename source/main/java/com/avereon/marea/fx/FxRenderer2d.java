@@ -402,14 +402,16 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		}
 	}
 
-	public void setPen( Paint paint, double width, LineCap cap, LineJoin join, double[] dashes, double offset ) {
+	public void setDrawPen( Paint paint, double width, LineCap cap, LineJoin join, double[] dashes, double offset ) {
 		getGraphicsContext2D().setStroke( paint );
 		getGraphicsContext2D().setLineWidth( width );
 		getGraphicsContext2D().setLineCap( getCap( cap ) );
 		getGraphicsContext2D().setLineJoin( getJoin( join ) );
 		getGraphicsContext2D().setLineDashes( dashes );
 		getGraphicsContext2D().setLineDashOffset( offset );
+	}
 
+	public void setFillPen( Paint paint ) {
 		getGraphicsContext2D().setFill( paint );
 	}
 
@@ -418,22 +420,22 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	public void drawLine( double x1, double y1, double x2, double y2 ) {
-		worldSetup();
+		shapeSetup( x1, y1, 0 );
 		getGraphicsContext2D().strokeLine( x1, y1, x2, y2 );
 	}
 
-	public void drawEllipse( double cx, double cy, double rx, double ry, double rotation ) {
-		worldSetup();
+	public void drawEllipse( double cx, double cy, double rx, double ry, double rotate ) {
+		shapeSetup( cx, cy, rotate );
 		getGraphicsContext2D().strokeOval( cx - rx, cy - ry, 2 * rx, 2 * ry );
 	}
 
-	public void drawArc( double cx, double cy, double rx, double ry, double start, double extent, double rotation ) {
-		worldSetup();
+	public void drawArc( double cx, double cy, double rx, double ry, double start, double extent, double rotate ) {
+		shapeSetup( cx, cy, rotate );
 		getGraphicsContext2D().strokeArc( cx - rx, cy - ry, 2 * rx, 2 * ry, -start, -extent, ArcType.OPEN );
 	}
 
 	public void drawQuad( double x1, double y1, double x2, double y2, double x3, double y3 ) {
-		worldSetup();
+		shapeSetup( x1, y1, 0 );
 		getGraphicsContext2D().beginPath();
 		getGraphicsContext2D().moveTo( x1, y1 );
 		getGraphicsContext2D().quadraticCurveTo( x2, y2, x3, y3 );
@@ -441,7 +443,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	public void drawCubic( double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4 ) {
-		worldSetup();
+		shapeSetup( x1, y1, 0 );
 		getGraphicsContext2D().beginPath();
 		getGraphicsContext2D().moveTo( x1, y1 );
 		getGraphicsContext2D().bezierCurveTo( x2, y2, x3, y3, x4, y4 );
@@ -450,14 +452,14 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void drawPath( List<Path.Element> path ) {
-		worldSetup();
+		shapeSetup( 0, 0, 0 );
 		getGraphicsContext2D().beginPath();
 		runPath( path );
 		getGraphicsContext2D().stroke();
 	}
 
 	public void drawText( double x, double y, double height, double rotate, String text, Font font ) {
-		worldSetup();
+		shapeSetup( x, y, rotate );
 		getGraphicsContext2D().save();
 		useFontScales( x, y, height, rotate, font );
 		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, new double[]{ x, y } ) );
@@ -465,9 +467,14 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		getGraphicsContext2D().restore();
 	}
 
+	public void fillEllipse( double cx, double cy, double rx, double ry, double rotate ) {
+		shapeSetup( cx, cy, rotate );
+		getGraphicsContext2D().fillOval( cx - rx, cy - ry, 2 * rx, 2 * ry );
+	}
+
 	@Override
-	public void fillPath( List<Path.Element> path, boolean closed ) {
-		worldSetup();
+	public void fillPath( List<Path.Element> path ) {
+		shapeSetup( 0, 0, 0 );
 		getGraphicsContext2D().beginPath();
 		runPath( path );
 		getGraphicsContext2D().fill();
@@ -475,7 +482,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void fillText( double x, double y, double height, double rotate, String text, Font font ) {
-		worldSetup();
+		shapeSetup( x, y, rotate );
 		getGraphicsContext2D().save();
 		useFontScales( x, y, height, rotate, font );
 		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, new double[]{ x, y } ) );
@@ -484,6 +491,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	@Override
+	@Deprecated
 	public void draw( Shape2d shape, Pen pen ) {
 		setPen( pen );
 		switch( shape.type() ) {
@@ -497,65 +505,73 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		}
 	}
 
+	@Deprecated
 	public void draw( Collection<? extends Shape2d> shapes, Pen pen ) {
 		shapes.forEach( s -> draw( s, pen ) );
 	}
 
+	@Deprecated
 	private void drawArc( Arc arc ) {
 		double[] anchor = Vector.add( arc.getAnchor(), Point.of( -arc.getRadius()[ 0 ], -arc.getRadius()[ 1 ] ) );
 		double[] radius = Vector.scale( arc.getRadius(), 2 );
 
-		worldSetup( arc );
+		shapeSetup( arc );
 		getGraphicsContext2D().strokeArc( anchor[ 0 ], anchor[ 1 ], radius[ 0 ], radius[ 1 ], -arc.getStart(), -arc.getExtent(), ArcType.OPEN );
 	}
 
+	@Deprecated
 	private void drawEllipse( Ellipse ellipse ) {
 		double[] anchor = Vector.add( ellipse.getAnchor(), Point.of( -ellipse.getRadius()[ 0 ], -ellipse.getRadius()[ 1 ] ) );
 		double[] radius = Vector.scale( ellipse.getRadius(), 2 );
 
-		worldSetup( ellipse );
+		shapeSetup( ellipse );
 		getGraphicsContext2D().strokeOval( anchor[ 0 ], anchor[ 1 ], radius[ 0 ], radius[ 1 ] );
 	}
 
+	@Deprecated
 	private void drawLine( Line line ) {
 		double[] anchor = line.getAnchor();
 		double[] vector = line.getVector();
 
-		worldSetup( line );
+		shapeSetup( line );
 		getGraphicsContext2D().strokeLine( anchor[ 0 ], anchor[ 1 ], vector[ 0 ], vector[ 1 ] );
 	}
 
+	@Deprecated
 	private void drawCurve( Curve curve ) {
 		double[] a = curve.getAnchor();
 		double[] b = curve.getAnchorControl();
 		double[] c = curve.getVectorControl();
 		double[] d = curve.getVector();
 
-		worldSetup( curve );
+		shapeSetup( curve );
 		getGraphicsContext2D().beginPath();
 		getGraphicsContext2D().moveTo( a[ 0 ], a[ 1 ] );
 		getGraphicsContext2D().bezierCurveTo( b[ 0 ], b[ 1 ], c[ 0 ], c[ 1 ], d[ 0 ], d[ 1 ] );
 		getGraphicsContext2D().stroke();
 	}
 
+	@Deprecated
 	private void drawQuad( Quad quad ) {
 		double[] a = quad.getAnchor();
 		double[] b = quad.getControl();
 		double[] c = quad.getVector();
 
-		worldSetup( quad );
+		shapeSetup( quad );
 		getGraphicsContext2D().beginPath();
 		getGraphicsContext2D().moveTo( a[ 0 ], a[ 1 ] );
 		getGraphicsContext2D().quadraticCurveTo( b[ 0 ], b[ 1 ], c[ 0 ], c[ 1 ] );
 		getGraphicsContext2D().stroke();
 	}
 
+	@Deprecated
 	private void drawPath( Path path ) {
-		worldSetup( path );
+		shapeSetup( path );
 		runPath( path.getElements() );
 		getGraphicsContext2D().stroke();
 	}
 
+	@Deprecated
 	private void drawText( Text text ) {
 		useFontScales( text );
 		double[] anchor = text.getAnchor();
@@ -563,6 +579,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	@Override
+	@Deprecated
 	public void fill( Shape2d shape, Pen pen ) {
 		setPen( pen );
 		switch( shape.type() ) {
@@ -572,24 +589,28 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		}
 	}
 
+	@Deprecated
 	public void fill( Collection<? extends Shape2d> shapes, Pen pen ) {
 		shapes.forEach( s -> fill( s, pen ) );
 	}
 
+	@Deprecated
 	private void fillEllipse( Ellipse ellipse ) {
 		double[] anchor = Vector.add( ellipse.getAnchor(), Point.of( -ellipse.getRadius()[ 0 ], -ellipse.getRadius()[ 1 ] ) );
 		double[] radius = Vector.scale( ellipse.getRadius(), 2 );
 
-		worldSetup( ellipse );
+		shapeSetup( ellipse );
 		getGraphicsContext2D().fillOval( anchor[ 0 ], anchor[ 1 ], radius[ 0 ], radius[ 1 ] );
 	}
 
+	@Deprecated
 	private void fillPath( Path path ) {
-		worldSetup( path );
+		shapeSetup( path );
 		runPath( path.getElements() );
 		getGraphicsContext2D().fill();
 	}
 
+	@Deprecated
 	private void fillText( Text text ) {
 		useFontScales( text );
 		double[] anchor = text.getAnchor();
@@ -671,19 +692,24 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		getGraphicsContext2D().setTransform( screenTransform );
 	}
 
-	private void worldSetup() {
-		// set transform to screen
-		getGraphicsContext2D().setTransform( worldTransform );
+	//	private void worldSetup() {
+	//		// set transform to screen
+	//		getGraphicsContext2D().setTransform( worldTransform );
+	//	}
+
+	private void shapeSetup( double x, double y, double r ) {
+		shapeSetup( new double[]{ x, y }, r );
 	}
 
-	private void worldSetup( Shape2d shape ) {
-		// set transform to screen
-		worldSetup( shape.getAnchor(), shape.getRotate() );
-	}
-
-	private void worldSetup( double[] anchor, double rotate ) {
+	private void shapeSetup( double[] anchor, double rotate ) {
 		// set transform to screen
 		getGraphicsContext2D().setTransform( rotate( worldTransform, rotate, anchor ) );
+	}
+
+	@Deprecated
+	private void shapeSetup( Shape2d shape ) {
+		// set transform to screen
+		shapeSetup( shape.getAnchor(), shape.getRotate() );
 	}
 
 	private void doOnDragBegin( MouseEvent e ) {
