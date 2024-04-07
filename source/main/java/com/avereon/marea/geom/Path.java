@@ -62,6 +62,11 @@ public class Path implements Shape2d, Shape3d {
 		return ShapeType.PATH;
 	}
 
+	public Path move( double bx, double by ) {
+		elements.add( new Element( Command.MOVE, new double[]{ bx, by } ) );
+		return this;
+	}
+
 	public Path line( double x, double y ) {
 		return line( Point.of( x, y ) );
 	}
@@ -76,6 +81,11 @@ public class Path implements Shape2d, Shape3d {
 		return this;
 	}
 
+	public Path curve( double bx, double by, double cx, double cy, double dx, double dy ) {
+		elements.add( new Element( Command.CURVE, new double[]{ bx, by, cx, cy, dx, dy } ) );
+		return this;
+	}
+
 	public Path quad( double bx, double by, double cx, double cy ) {
 		elements.add( new Element( Command.QUAD, new double[]{ bx, by, cx, cy } ) );
 		return this;
@@ -83,16 +93,6 @@ public class Path implements Shape2d, Shape3d {
 
 	public Path close() {
 		elements.add( new Element( Command.CLOSE, new double[]{} ) );
-		return this;
-	}
-
-	public Path curve( double bx, double by, double cx, double cy, double dx, double dy ) {
-		elements.add( new Element( Command.CURVE, new double[]{ bx, by, cx, cy, dx, dy } ) );
-		return this;
-	}
-
-	public Path move( double bx, double by ) {
-		elements.add( new Element( Command.MOVE, new double[]{ bx, by } ) );
 		return this;
 	}
 

@@ -19,7 +19,7 @@ public interface DirectRenderer2d extends Renderer {
 
 	void drawCubic( double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4 );
 
-	void drawPath( List<Path.Element> path, boolean closed );
+	void drawPath( List<Path.Element> path );
 
 	void drawText( double x, double y, double height, double rotate, String text, Font font );
 

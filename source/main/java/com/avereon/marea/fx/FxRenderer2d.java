@@ -449,10 +449,10 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	@Override
-	public void drawPath( List<Path.Element> path, boolean closed ) {
+	public void drawPath( List<Path.Element> path ) {
 		worldSetup();
 		getGraphicsContext2D().beginPath();
-		runPath( path, closed );
+		runPath( path );
 		getGraphicsContext2D().stroke();
 	}
 
@@ -469,7 +469,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	public void fillPath( List<Path.Element> path, boolean closed ) {
 		worldSetup();
 		getGraphicsContext2D().beginPath();
-		runPath( path, closed );
+		runPath( path );
 		getGraphicsContext2D().fill();
 	}
 
@@ -552,7 +552,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	private void drawPath( Path path ) {
 		worldSetup( path );
-		runPath( path.getElements(), path.isClosed() );
+		runPath( path.getElements() );
 		getGraphicsContext2D().stroke();
 	}
 
@@ -586,7 +586,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	private void fillPath( Path path ) {
 		worldSetup( path );
-		runPath( path.getElements(), path.isClosed() );
+		runPath( path.getElements() );
 		getGraphicsContext2D().fill();
 	}
 
@@ -722,7 +722,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		}
 	}
 
-	private void runPath( List<Path.Element> elements, boolean closed ) {
+	private void runPath( List<Path.Element> elements ) {
 		getGraphicsContext2D().beginPath();
 		elements.forEach( e -> {
 			double[] data = e.data();
@@ -735,7 +735,6 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 				case QUAD -> getGraphicsContext2D().quadraticCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
 			}
 		} );
-		if( closed ) getGraphicsContext2D().closePath();
 	}
 
 	private StrokeLineCap getCap( LineCap cap ) {
