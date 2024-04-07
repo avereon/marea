@@ -409,7 +409,7 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 		}
 	}
 
-	public <T extends Shape2d> void draw( Collection<T> shapes, Pen pen ) {
+	public void draw( Collection<? extends Shape2d> shapes, Pen pen ) {
 		shapes.forEach( s -> draw( s, pen ) );
 	}
 
@@ -484,7 +484,7 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 		}
 	}
 
-	public <T extends Shape2d> void fill( Collection<T> shapes, Pen pen ) {
+	public void fill( Collection<? extends Shape2d> shapes, Pen pen ) {
 		shapes.forEach( s -> fill( s, pen ) );
 	}
 
