@@ -376,10 +376,20 @@ public interface Renderer {
 	 */
 	Point2D localToParent( double x, double y );
 
+	/**
+	 * Convert a Point2D in local coordinates to a Point2D in parent coordinates.
+	 *
+	 * @param point The point in local coordinates.
+	 */
 	default Point2D localToParent( Point2D point ) {
 		return localToParent( point.getX(), point.getY() );
 	}
 
+	/**
+	 * Convert a Point3D in local coordinates to a Point2D in parent coordinates.
+	 *
+	 * @param point The point in local coordinates.
+	 */
 	default Point2D localToParent2d( Point3D point ) {
 		return localToParent( point.getX(), point.getY() );
 	}
@@ -393,10 +403,20 @@ public interface Renderer {
 	 */
 	Point3D localToParent( double x, double y, double z );
 
+	/**
+	 * Convert a Point3D in local coordinates to a Point3D in parent coordinates.
+	 *
+	 * @param point3d The point in local coordinates.
+	 */
 	default Point3D localToParent( Point3D point3d ) {
 		return localToParent( point3d.getX(), point3d.getY(), point3d.getZ() );
 	}
 
+	/**
+	 * Convert a Point2D in local coordinates to a Point3D in parent coordinates.
+	 *
+	 * @param point The point in local coordinates.
+	 */
 	default Point3D localToParent3d( Point2D point ) {
 		return localToParent( point.getX(), point.getY(), 0 );
 	}
@@ -409,10 +429,20 @@ public interface Renderer {
 	 */
 	Point2D parentToLocal( double x, double y );
 
+	/**
+	 * Convert a Point2D in parent coordinates to a Point2D in local coordinates.
+	 *
+	 * @param point The point in parent coordinates.
+	 */
 	default Point2D parentToLocal( Point2D point ) {
 		return parentToLocal( point.getX(), point.getY() );
 	}
 
+	/**
+	 * Convert a Point3D in parent coordinates to a Point2D in local coordinates.
+	 *
+	 * @param point The point in parent coordinates.
+	 */
 	default Point2D parentToLocal2d( Point3D point ) {
 		return parentToLocal( point.getX(), point.getY() );
 	}
@@ -426,10 +456,20 @@ public interface Renderer {
 	 */
 	Point3D parentToLocal( double x, double y, double z );
 
+	/**
+	 * Convert a Point3D in parent coordinates to a Point3D in local coordinates.
+	 *
+	 * @param point3d The point in parent coordinates.
+	 */
 	default Point3D parentToLocal( Point3D point3d ) {
 		return parentToLocal( point3d.getX(), point3d.getY(), point3d.getZ() );
 	}
 
+	/**
+	 * Convert a Point2D in parent coordinates to a Point3D in local coordinates.
+	 *
+	 * @param point The point in parent coordinates.
+	 */
 	default Point3D parentToLocal3d( Point2D point ) {
 		return parentToLocal( point.getX(), point.getY(), 0 );
 	}
