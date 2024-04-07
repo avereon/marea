@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @CustomLog
-public class FxRenderer2d extends Canvas implements Renderer2d {
+public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 
 	public static final RenderUnit DEFAULT_LENGTH_UNIT = RenderUnit.CENTIMETER;
 

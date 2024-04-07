@@ -76,7 +76,7 @@ public class Demo2d extends Application {
 		//		runner.start();
 	}
 
-	private void staticRender( Renderer2d renderer ) {
+	private void staticRender( ShapeRenderer2d renderer ) {
 		renderer.clear();
 
 		Pen outlinePen = new Pen( Color.YELLOW, 1 );
@@ -129,7 +129,7 @@ public class Demo2d extends Application {
 		renderer.fill( airfoil, new Pen( Color.BLACK ) );
 	}
 
-	private void dynamicRender( Renderer2d renderer, long counter ) {
+	private void dynamicRender( ShapeRenderer2d renderer, long counter ) {
 		long start = System.nanoTime();
 
 		Random random = new Random();

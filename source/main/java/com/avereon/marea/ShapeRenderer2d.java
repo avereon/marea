@@ -2,7 +2,7 @@ package com.avereon.marea;
 
 import java.util.Collection;
 
-public interface Renderer2d extends Renderer {
+public interface ShapeRenderer2d extends Renderer {
 
 	void draw( Shape2d shape, Pen pen );
 
