@@ -418,18 +418,22 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	public void drawLine( double x1, double y1, double x2, double y2 ) {
+		worldSetup();
 		getGraphicsContext2D().strokeLine( x1, y1, x2, y2 );
 	}
 
 	public void drawEllipse( double cx, double cy, double rx, double ry, double rotation ) {
+		worldSetup();
 		getGraphicsContext2D().strokeOval( cx - rx, cy - ry, 2 * rx, 2 * ry );
 	}
 
 	public void drawArc( double cx, double cy, double rx, double ry, double start, double extent, double rotation ) {
+		worldSetup();
 		getGraphicsContext2D().strokeArc( cx - rx, cy - ry, 2 * rx, 2 * ry, -start, -extent, ArcType.OPEN );
 	}
 
 	public void drawQuad( double x1, double y1, double x2, double y2, double x3, double y3 ) {
+		worldSetup();
 		getGraphicsContext2D().beginPath();
 		getGraphicsContext2D().moveTo( x1, y1 );
 		getGraphicsContext2D().quadraticCurveTo( x2, y2, x3, y3 );
@@ -437,6 +441,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	public void drawCubic( double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4 ) {
+		worldSetup();
 		getGraphicsContext2D().beginPath();
 		getGraphicsContext2D().moveTo( x1, y1 );
 		getGraphicsContext2D().bezierCurveTo( x2, y2, x3, y3, x4, y4 );
@@ -445,12 +450,14 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void drawPath( List<Path.Element> path, boolean closed ) {
+		worldSetup();
 		getGraphicsContext2D().beginPath();
 		runPath( path, closed );
 		getGraphicsContext2D().stroke();
 	}
 
 	public void drawText( double x, double y, double height, double rotate, String text, Font font ) {
+		worldSetup();
 		getGraphicsContext2D().save();
 		useFontScales( x, y, height, rotate, font );
 		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, new double[]{ x, y } ) );
@@ -460,6 +467,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void fillPath( List<Path.Element> path, boolean closed ) {
+		worldSetup();
 		getGraphicsContext2D().beginPath();
 		runPath( path, closed );
 		getGraphicsContext2D().fill();
@@ -467,6 +475,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void fillText( double x, double y, double height, double rotate, String text, Font font ) {
+		worldSetup();
 		getGraphicsContext2D().save();
 		useFontScales( x, y, height, rotate, font );
 		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, new double[]{ x, y } ) );
@@ -662,9 +671,19 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		getGraphicsContext2D().setTransform( screenTransform );
 	}
 
+	private void worldSetup() {
+		// set transform to screen
+		getGraphicsContext2D().setTransform( worldTransform );
+	}
+
 	private void worldSetup( Shape2d shape ) {
 		// set transform to screen
-		getGraphicsContext2D().setTransform( rotate( worldTransform, shape.getRotate(), shape.getAnchor() ) );
+		worldSetup( shape.getAnchor(), shape.getRotate() );
+	}
+
+	private void worldSetup( double[] anchor, double rotate ) {
+		// set transform to screen
+		getGraphicsContext2D().setTransform( rotate( worldTransform, rotate, anchor ) );
 	}
 
 	private void doOnDragBegin( MouseEvent e ) {
