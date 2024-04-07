@@ -4,7 +4,6 @@ import com.avereon.curve.math.Point;
 import com.avereon.curve.math.Vector;
 import com.avereon.marea.*;
 import com.avereon.marea.geom.*;
-import com.avereon.zarra.font.FontUtil;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -18,7 +17,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
-import javafx.scene.text.Font;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
@@ -415,7 +413,7 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 	}
 
 	public void setFont( Font font ) {
-		getGraphicsContext2D().setFont( font );
+		getGraphicsContext2D().setFont( Font.toFxFont( font ) );
 	}
 
 	public void drawLine( double x1, double y1, double x2, double y2 ) {
@@ -444,9 +442,9 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 		getGraphicsContext2D().stroke();
 	}
 
-	public void drawText( double x, double y, double height, double rotate, String text ) {
+	public void drawText( double x, double y, double height, double rotate, String text, Font font ) {
 		getGraphicsContext2D().save();
-		useFontScales( x, y, height, rotate, getGraphicsContext2D().getFont() );
+		useFontScales( x, y, height, rotate, font );
 		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, new double[]{ x, y } ) );
 		getGraphicsContext2D().strokeText( text, x, y );
 		getGraphicsContext2D().restore();
@@ -588,9 +586,7 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 		if( getGraphicsContext2D().getLineDashes() != null ) getGraphicsContext2D().setLineDashes( Arrays.stream( getGraphicsContext2D().getLineDashes() ).map( d -> d * FONT_POINT_SIZE ).toArray() );
 		getGraphicsContext2D().setLineDashOffset( getGraphicsContext2D().getLineDashOffset() * FONT_POINT_SIZE );
 		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, Vector.scale( Vector.of( x, y ), FONT_POINT_SIZE, -FONT_POINT_SIZE ) ) );
-
-		// TODO This class uses FX font. Create and use Marea font.
-		getGraphicsContext2D().setFont( FontUtil.derive( font == null ? new Font( 1 ) : font, height * FONT_POINT_SIZE ) );
+		getGraphicsContext2D().setFont( Font.toFxFont((font == null ? new Font(): font).derive( height * FONT_POINT_SIZE )) );
 	}
 
 	private void updateWorldTransforms( RenderUnit unit, double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double rotate, double width, double height ) {

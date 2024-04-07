@@ -1,10 +1,10 @@
 package com.avereon.marea.geom;
 
 import com.avereon.curve.math.Point;
+import com.avereon.marea.Font;
 import com.avereon.marea.Shape2d;
 import com.avereon.marea.Shape3d;
 import com.avereon.marea.ShapeType;
-import javafx.scene.text.Font;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 

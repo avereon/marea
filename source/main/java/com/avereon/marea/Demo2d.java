@@ -8,7 +8,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import lombok.CustomLog;
@@ -126,7 +125,7 @@ public class Demo2d extends Application {
 		// Fill checks
 		renderer.fill( new Ellipse( -0.5, -0.4, 0.1, 0.1 ), goldenPen );
 		renderer.fill( new Ellipse( -0.5, -0.4, 0.05, 0.1, -120 ), brownPen );
-		renderer.fill( new Text( "Joukowsky", 0.4, -0.3, 0.2, 10, Font.font( "DejaVu Serif", 100 ) ), brownPen );
+		renderer.fill( new Text( "Joukowsky", 0.4, -0.3, 0.2, 10, new Font( "DejaVu Serif" ) ), brownPen );
 		renderer.fill( airfoil, new Pen( Color.BLACK ) );
 	}
 
