@@ -4,6 +4,7 @@ import com.avereon.curve.math.Point;
 import com.avereon.curve.math.Vector;
 import com.avereon.marea.*;
 import com.avereon.marea.geom.*;
+import com.avereon.zarra.font.FontUtil;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -13,6 +14,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
@@ -46,11 +48,15 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 	 */
 	private static final double FONT_POINT_SIZE = 1e4;
 
+	// Transforms ---------------------------------------------------------------
+
 	private final Affine screenTransform = new Affine();
 
 	private Affine worldTransform = new Affine( Transform.scale( 1, -1 ) );
 
 	private Affine worldTextTransform = new Affine( Transform.scale( 1, 1 ) );
+
+	// Properties ---------------------------------------------------------------
 
 	private ObjectProperty<RenderUnit> lengthUnit;
 
@@ -62,17 +68,19 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 
 	private DoubleProperty zoomY;
 
+	private DoubleProperty zoomStep;
+
 	private DoubleProperty viewpointX;
 
 	private DoubleProperty viewpointY;
 
 	private DoubleProperty viewRotate;
 
-	private DoubleProperty zoomStep;
+	// Internal variables -------------------------------------------------------
 
-	private double positiveZoomFactor;
+	private double positiveZoomStep;
 
-	private double negativeZoomFactor;
+	private double negativeZoomStep;
 
 	private Point2D dragViewpoint;
 
@@ -264,8 +272,8 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 	@Override
 	public void setZoomStep( double zoomStep ) {
 		zoomStepProperty().set( zoomStep );
-		positiveZoomFactor = 1.0 + zoomStep;
-		negativeZoomFactor = 1.0 / positiveZoomFactor;
+		positiveZoomStep = 1.0 + zoomStep;
+		negativeZoomStep = 1.0 / positiveZoomStep;
 	}
 
 	@Override
@@ -395,6 +403,55 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 		}
 	}
 
+	public void setPen( Paint paint, double width, LineCap cap, LineJoin join, double[] dashes, double offset ) {
+		getGraphicsContext2D().setStroke( paint );
+		getGraphicsContext2D().setLineWidth( width );
+		getGraphicsContext2D().setLineCap( getCap( cap ) );
+		getGraphicsContext2D().setLineJoin( getJoin( join ) );
+		getGraphicsContext2D().setLineDashes( dashes );
+		getGraphicsContext2D().setLineDashOffset( offset );
+
+		getGraphicsContext2D().setFill( paint );
+	}
+
+	public void setFont( Font font ) {
+		getGraphicsContext2D().setFont( font );
+	}
+
+	public void drawLine( double x1, double y1, double x2, double y2 ) {
+		getGraphicsContext2D().strokeLine( x1, y1, x2, y2 );
+	}
+
+	public void drawEllipse( double cx, double cy, double rx, double ry, double rotation ) {
+		getGraphicsContext2D().strokeOval( cx - rx, cy - ry, 2 * rx, 2 * ry );
+	}
+
+	public void drawArc( double cx, double cy, double rx, double ry, double start, double extent, double rotation ) {
+		getGraphicsContext2D().strokeArc( cx - rx, cy - ry, 2 * rx, 2 * ry, -start, -extent, ArcType.OPEN );
+	}
+
+	public void drawQuad( double x1, double y1, double x2, double y2, double x3, double y3 ) {
+		getGraphicsContext2D().beginPath();
+		getGraphicsContext2D().moveTo( x1, y1 );
+		getGraphicsContext2D().quadraticCurveTo( x2, y2, x3, y3 );
+		getGraphicsContext2D().stroke();
+	}
+
+	public void drawCubic( double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4 ) {
+		getGraphicsContext2D().beginPath();
+		getGraphicsContext2D().moveTo( x1, y1 );
+		getGraphicsContext2D().bezierCurveTo( x2, y2, x3, y3, x4, y4 );
+		getGraphicsContext2D().stroke();
+	}
+
+	public void drawText( double x, double y, double height, double rotate, String text ) {
+		getGraphicsContext2D().save();
+		useFontScales( x, y, height, rotate, getGraphicsContext2D().getFont() );
+		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, new double[]{ x, y } ) );
+		getGraphicsContext2D().strokeText( text, x, y );
+		getGraphicsContext2D().restore();
+	}
+
 	@Override
 	public void draw( Shape2d shape, Pen pen ) {
 		setPen( pen );
@@ -519,12 +576,21 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 	}
 
 	private void useFontScales( Text text ) {
-		double[] anchor = text.getAnchor();
+		useFontScales( text.getAnchor(), text.getHeight(), text.getRotate(), text.getFont() );
+	}
+
+	private void useFontScales( double[] anchor, double height, double rotate, Font font ) {
+		useFontScales( anchor[ 0 ], anchor[ 1 ], height, rotate, font );
+	}
+
+	private void useFontScales( double x, double y, double height, double rotate, Font font ) {
 		getGraphicsContext2D().setLineWidth( getGraphicsContext2D().getLineWidth() * FONT_POINT_SIZE );
 		if( getGraphicsContext2D().getLineDashes() != null ) getGraphicsContext2D().setLineDashes( Arrays.stream( getGraphicsContext2D().getLineDashes() ).map( d -> d * FONT_POINT_SIZE ).toArray() );
 		getGraphicsContext2D().setLineDashOffset( getGraphicsContext2D().getLineDashOffset() * FONT_POINT_SIZE );
-		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -text.getRotate(), Vector.scale( anchor, FONT_POINT_SIZE, -FONT_POINT_SIZE ) ) );
-		getGraphicsContext2D().setFont( new Font( text.getHeight() * FONT_POINT_SIZE ) );
+		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, Vector.scale( Vector.of( x, y ), FONT_POINT_SIZE, -FONT_POINT_SIZE ) ) );
+
+		// TODO This class uses FX font. Create and use Marea font.
+		getGraphicsContext2D().setFont( FontUtil.derive( font == null ? new Font( 1 ) : font, height * FONT_POINT_SIZE ) );
 	}
 
 	private void updateWorldTransforms( RenderUnit unit, double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double rotate, double width, double height ) {
@@ -607,7 +673,7 @@ public class FxRenderer2d extends Canvas implements ShapeRenderer2d {
 			double zoomX = getZoom().getX();
 			double zoomY = getZoom().getY();
 
-			double scale = Math.signum( e.getDeltaY() ) < 0 ? negativeZoomFactor : positiveZoomFactor;
+			double scale = Math.signum( e.getDeltaY() ) < 0 ? negativeZoomStep : positiveZoomStep;
 
 			zoomX = scale * zoomX;
 			zoomY = scale * zoomY;

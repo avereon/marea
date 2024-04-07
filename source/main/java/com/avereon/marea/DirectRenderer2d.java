@@ -2,10 +2,13 @@ package com.avereon.marea;
 
 import com.avereon.marea.geom.Path;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
 
 public interface DirectRenderer2d {
 
 	void setPen( Paint paint, double width, LineCap cap, LineJoin join, double[] dashes, double offset );
+
+	void setFont( Font font );
 
 	void drawLine( double x1, double y1, double x2, double y2 );
 

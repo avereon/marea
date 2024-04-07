@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 @Accessors( fluent = true )
 public class Pen {
 
+	// TODO This class uses FX Paint and Color. Create and use Marea paint and color.
 	private Paint paint = Color.BLACK;
 
 	private double width = 1.0;
