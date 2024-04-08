@@ -452,6 +452,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void drawPath( List<Path.Element> path ) {
+		// FIXME This is a hack to get the fill to work.
 		shapeSetup( 0, 0, 0 );
 		getGraphicsContext2D().beginPath();
 		runPath( path );
@@ -474,6 +475,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void fillPath( List<Path.Element> path ) {
+		// FIXME This is a hack to get the fill to work.
 		shapeSetup( 0, 0, 0 );
 		getGraphicsContext2D().beginPath();
 		runPath( path );
