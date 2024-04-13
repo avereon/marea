@@ -15,7 +15,7 @@ public interface DirectRenderer2d extends Renderer {
 
 	void drawEllipse( double cx, double cy, double rx, double ry, double rotation );
 
-	void drawArc( double cx, double cy, double rx, double ry, double start, double extent, double rotation );
+	void drawArc( double cx, double cy, double rx, double ry, double rotation, double start, double extent );
 
 	void drawQuad( double x1, double y1, double x2, double y2, double x3, double y3 );
 
