@@ -15,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcType;
+import javafx.scene.shape.FillRule;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.transform.Affine;
@@ -451,9 +452,8 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	@Override
-	public void drawPath( List<Path.Element> path ) {
-		// FIXME This is a hack to get the fill to work.
-		shapeSetup( 0, 0, 0 );
+	public void drawPath( double x, double y, List<Path.Element> path ) {
+		shapeSetup( x, y );
 		getGraphicsContext2D().beginPath();
 		runPath( path );
 		getGraphicsContext2D().stroke();
@@ -474,9 +474,9 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	@Override
-	public void fillPath( List<Path.Element> path ) {
-		// FIXME This is a hack to get the fill to work.
-		shapeSetup( 0, 0, 0 );
+	public void fillPath( double x, double y, List<Path.Element> path ) {
+		shapeSetup( x, y );
+		getGraphicsContext2D().setFillRule( FillRule.EVEN_ODD );
 		getGraphicsContext2D().beginPath();
 		runPath( path );
 		getGraphicsContext2D().fill();
@@ -569,6 +569,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	@Deprecated
 	private void drawPath( Path path ) {
 		shapeSetup( path );
+		getGraphicsContext2D().beginPath();
 		runPath( path.getElements() );
 		getGraphicsContext2D().stroke();
 	}
@@ -608,6 +609,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	@Deprecated
 	private void fillPath( Path path ) {
 		shapeSetup( path );
+		getGraphicsContext2D().beginPath();
 		runPath( path.getElements() );
 		getGraphicsContext2D().fill();
 	}
@@ -682,6 +684,13 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		return affine;
 	}
 
+	private Affine offset( Affine transform, double[] anchor ) {
+		Affine affine = new Affine();
+		affine.append( transform );
+		affine.appendTranslation( anchor[ 0 ], anchor[ 1 ] );
+		return affine;
+	}
+
 	private Affine rotate( Affine transform, double rotate, double[] anchor ) {
 		Affine affine = new Affine();
 		affine.append( transform );
@@ -694,13 +703,18 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		getGraphicsContext2D().setTransform( screenTransform );
 	}
 
-	//	private void worldSetup() {
-	//		// set transform to screen
-	//		getGraphicsContext2D().setTransform( worldTransform );
-	//	}
+//	private void shapeSetup() {
+//		// set transform to screen
+//		getGraphicsContext2D().setTransform( worldTransform );
+//	}
+
+	private void shapeSetup( double x, double y ) {
+		// set transform to screen
+		getGraphicsContext2D().setTransform( offset( worldTransform, new double[]{ x, y } ) );
+	}
 
 	private void shapeSetup( double x, double y, double r ) {
-		shapeSetup( new double[]{ x, y }, r );
+		getGraphicsContext2D().setTransform( rotate( worldTransform, r, new double[]{ x, y } ) );
 	}
 
 	private void shapeSetup( double[] anchor, double rotate ) {
@@ -751,16 +765,15 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	private void runPath( List<Path.Element> elements ) {
-		getGraphicsContext2D().beginPath();
 		elements.forEach( e -> {
 			double[] data = e.data();
 			switch( e.command() ) {
-				case ARC -> getGraphicsContext2D().arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
-				case CLOSE -> getGraphicsContext2D().closePath();
+				case MOVE -> getGraphicsContext2D().moveTo( data[ 0 ], data[ 1 ] );
+				case ARC -> getGraphicsContext2D().arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], -data[ 4 ], -data[ 5 ] );
 				case CURVE -> getGraphicsContext2D().bezierCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
 				case LINE -> getGraphicsContext2D().lineTo( data[ 0 ], data[ 1 ] );
-				case MOVE -> getGraphicsContext2D().moveTo( data[ 0 ], data[ 1 ] );
 				case QUAD -> getGraphicsContext2D().quadraticCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
+				case CLOSE -> getGraphicsContext2D().closePath();
 			}
 		} );
 	}
