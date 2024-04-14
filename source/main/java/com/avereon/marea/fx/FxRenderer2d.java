@@ -460,12 +460,8 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	public void drawText( double x, double y, double height, double rotate, String text, Font font ) {
-		shapeSetup( x, y, rotate );
-		getGraphicsContext2D().save();
 		useFontScales( x, y, height, rotate, font );
-		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, new double[]{ x, y } ) );
-		getGraphicsContext2D().strokeText( text, x, y );
-		getGraphicsContext2D().restore();
+		getGraphicsContext2D().strokeText( text, x * FONT_POINT_SIZE, -y * FONT_POINT_SIZE );
 	}
 
 	public void fillEllipse( double cx, double cy, double rx, double ry, double rotate ) {
@@ -484,12 +480,8 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void fillText( double x, double y, double height, double rotate, String text, Font font ) {
-		shapeSetup( x, y, rotate );
-		getGraphicsContext2D().save();
 		useFontScales( x, y, height, rotate, font );
-		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, new double[]{ x, y } ) );
-		getGraphicsContext2D().fillText( text, x, y );
-		getGraphicsContext2D().restore();
+		getGraphicsContext2D().fillText( text, x * FONT_POINT_SIZE, -y * FONT_POINT_SIZE );
 	}
 
 	@Override
