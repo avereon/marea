@@ -72,6 +72,10 @@ public class Font {
 	}
 
 	public static javafx.scene.text.Font toFxFont( Font font ) {
-		return javafx.scene.text.Font.font( font.getName(), FontWeight.valueOf( font.getWeight().name() ), FontPosture.valueOf( font.getPosture().name() ), font.getSize() );
+		String name = font.getName();
+		FontWeight weight = FontUtil.getFontWeight( name );
+		FontPosture posture = FontUtil.getFontPosture( name );
+		double size = font.getSize();
+		return javafx.scene.text.Font.font( name, weight, posture, size );
 	}
 }

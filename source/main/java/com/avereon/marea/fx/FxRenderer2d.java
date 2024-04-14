@@ -46,7 +46,8 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	 * font engine does not like really large values either. A value between 1e2
 	 * and 1e6 is recommended.
 	 */
-	private static final double FONT_POINT_SIZE = 1e4;
+	// NOTE On 14 Apr 2024 this value was reduced to 1e2
+	private static final double FONT_POINT_SIZE = 1e2;
 
 	// Transforms ---------------------------------------------------------------
 
@@ -416,10 +417,6 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		getGraphicsContext2D().setFill( paint );
 	}
 
-	public void setFont( Font font ) {
-		getGraphicsContext2D().setFont( Font.toFxFont( font ) );
-	}
-
 	public void drawLine( double x1, double y1, double x2, double y2 ) {
 		shapeSetup( x1, y1, 0 );
 		getGraphicsContext2D().strokeLine( x1, y1, x2, y2 );
@@ -636,7 +633,10 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		if( getGraphicsContext2D().getLineDashes() != null ) getGraphicsContext2D().setLineDashes( Arrays.stream( getGraphicsContext2D().getLineDashes() ).map( d -> d * FONT_POINT_SIZE ).toArray() );
 		getGraphicsContext2D().setLineDashOffset( getGraphicsContext2D().getLineDashOffset() * FONT_POINT_SIZE );
 		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, Vector.scale( Vector.of( x, y ), FONT_POINT_SIZE, -FONT_POINT_SIZE ) ) );
-		getGraphicsContext2D().setFont( Font.toFxFont( (font == null ? new Font() : font).derive( height * FONT_POINT_SIZE ) ) );
+
+		// Set the font
+		if( font == null ) font = new Font();
+		getGraphicsContext2D().setFont( Font.toFxFont( font.derive( height * FONT_POINT_SIZE ) ) );
 	}
 
 	private void updateWorldTransforms( RenderUnit unit, double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double rotate, double width, double height ) {
@@ -695,10 +695,10 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		getGraphicsContext2D().setTransform( screenTransform );
 	}
 
-//	private void shapeSetup() {
-//		// set transform to screen
-//		getGraphicsContext2D().setTransform( worldTransform );
-//	}
+	//	private void shapeSetup() {
+	//		// set transform to screen
+	//		getGraphicsContext2D().setTransform( worldTransform );
+	//	}
 
 	private void shapeSetup( double x, double y ) {
 		// set transform to screen
