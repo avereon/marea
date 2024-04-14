@@ -431,7 +431,6 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	public void drawArc( double cx, double cy, double rx, double ry, double rotate, double start, double extent ) {
 		shapeSetup( cx, cy, rotate );
-		//getGraphicsContext2D().setTransform( rotate( worldTransform, rotate, anchor ) );
 		getGraphicsContext2D().strokeArc( cx - rx, cy - ry, 2 * rx, 2 * ry, -start, -extent, ArcType.OPEN );
 	}
 
