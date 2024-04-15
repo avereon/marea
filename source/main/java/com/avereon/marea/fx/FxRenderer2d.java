@@ -47,7 +47,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	 * and 1e6 is recommended.
 	 */
 	// NOTE On 14 Apr 2024 this value was reduced to 1e2
-	private static final double FONT_POINT_SIZE = 1e2;
+	private static final double FONT_POINT_SIZE = 72;
 
 	// Transforms ---------------------------------------------------------------
 
@@ -405,12 +405,27 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	public void setDrawPen( Paint paint, double width, LineCap cap, LineJoin join, double[] dashes, double offset ) {
+		setDrawPen( paint, width, cap, join, dashes, offset, false );
+	}
+
+	public void setDrawPen( Paint paint, double width, LineCap cap, LineJoin join, double[] dashes, double offset, boolean text ) {
 		getGraphicsContext2D().setStroke( paint );
-		getGraphicsContext2D().setLineWidth( width );
 		getGraphicsContext2D().setLineCap( getCap( cap ) );
 		getGraphicsContext2D().setLineJoin( getJoin( join ) );
-		getGraphicsContext2D().setLineDashes( dashes );
-		getGraphicsContext2D().setLineDashOffset( offset );
+		if( !text ) {
+			getGraphicsContext2D().setLineWidth( width );
+			getGraphicsContext2D().setLineDashes( dashes );
+			getGraphicsContext2D().setLineDashOffset( offset );
+		} else {
+			getGraphicsContext2D().setLineWidth( width * FONT_POINT_SIZE );
+			if( dashes == null ) {
+				getGraphicsContext2D().setLineDashes( (double[])null );
+			} else {
+				getGraphicsContext2D().setLineDashes( Arrays.stream( dashes ).map( d -> d * FONT_POINT_SIZE ).toArray() );
+			}
+			if( getGraphicsContext2D().getLineDashes() != null ) getGraphicsContext2D().setLineDashes( Arrays.stream( getGraphicsContext2D().getLineDashes() ).map( d -> d * FONT_POINT_SIZE ).toArray() );
+			getGraphicsContext2D().setLineDashOffset( offset * FONT_POINT_SIZE );
+		}
 	}
 
 	public void setFillPen( Paint paint ) {
@@ -457,7 +472,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	public void drawText( double x, double y, double height, double rotate, String text, Font font ) {
-		useFontScales( x, y, height, rotate, font );
+		textSetup( x, y, height, rotate, font );
 		getGraphicsContext2D().strokeText( text, x * FONT_POINT_SIZE, -y * FONT_POINT_SIZE );
 	}
 
@@ -477,7 +492,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void fillText( double x, double y, double height, double rotate, String text, Font font ) {
-		useFontScales( x, y, height, rotate, font );
+		textSetup( x, y, height, rotate, font );
 		getGraphicsContext2D().fillText( text, x * FONT_POINT_SIZE, -y * FONT_POINT_SIZE );
 	}
 
@@ -565,7 +580,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Deprecated
 	private void drawText( Text text ) {
-		useFontScales( text );
+		textSetup( text );
 		double[] anchor = text.getAnchor();
 		getGraphicsContext2D().strokeText( text.getText(), anchor[ 0 ] * FONT_POINT_SIZE, -anchor[ 1 ] * FONT_POINT_SIZE );
 	}
@@ -605,7 +620,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Deprecated
 	private void fillText( Text text ) {
-		useFontScales( text );
+		textSetup( text );
 		double[] anchor = text.getAnchor();
 		getGraphicsContext2D().fillText( text.getText(), anchor[ 0 ] * FONT_POINT_SIZE, -anchor[ 1 ] * FONT_POINT_SIZE );
 	}
@@ -620,23 +635,19 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		getGraphicsContext2D().setLineDashOffset( pen.offset() );
 	}
 
-	private void useFontScales( Text text ) {
-		useFontScales( text.getAnchor(), text.getHeight(), text.getRotate(), text.getFont() );
-	}
-
-	private void useFontScales( double[] anchor, double height, double rotate, Font font ) {
-		useFontScales( anchor[ 0 ], anchor[ 1 ], height, rotate, font );
-	}
-
-	private void useFontScales( double x, double y, double height, double rotate, Font font ) {
+	private void textSetup( Text text ) {
 		getGraphicsContext2D().setLineWidth( getGraphicsContext2D().getLineWidth() * FONT_POINT_SIZE );
 		if( getGraphicsContext2D().getLineDashes() != null ) getGraphicsContext2D().setLineDashes( Arrays.stream( getGraphicsContext2D().getLineDashes() ).map( d -> d * FONT_POINT_SIZE ).toArray() );
 		getGraphicsContext2D().setLineDashOffset( getGraphicsContext2D().getLineDashOffset() * FONT_POINT_SIZE );
-		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, Vector.scale( Vector.of( x, y ), FONT_POINT_SIZE, -FONT_POINT_SIZE ) ) );
 
-		// Set the font
+		double[] anchor = text.getAnchor();
+		textSetup( anchor[ 0 ], anchor[ 1 ], text.getHeight(), text.getRotate(), text.getFont() );
+	}
+
+	private void textSetup( double x, double y, double height, double rotate, Font font ) {
 		if( font == null ) font = new Font();
 		getGraphicsContext2D().setFont( Font.toFxFont( font.derive( height * FONT_POINT_SIZE ) ) );
+		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, Vector.scale( Vector.of( x, y ), FONT_POINT_SIZE, -FONT_POINT_SIZE ) ) );
 	}
 
 	private void updateWorldTransforms( RenderUnit unit, double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double rotate, double width, double height ) {
@@ -694,11 +705,6 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		// set transform to screen
 		getGraphicsContext2D().setTransform( screenTransform );
 	}
-
-	//	private void shapeSetup() {
-	//		// set transform to screen
-	//		getGraphicsContext2D().setTransform( worldTransform );
-	//	}
 
 	private void shapeSetup( double x, double y ) {
 		// set transform to screen
@@ -771,6 +777,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	private StrokeLineCap getCap( LineCap cap ) {
+		if( cap == null ) return null;
 		return switch( cap ) {
 			case SQUARE -> StrokeLineCap.SQUARE;
 			case BUTT -> StrokeLineCap.BUTT;
@@ -779,6 +786,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	private StrokeLineJoin getJoin( LineJoin join ) {
+		if( join == null ) return null;
 		return switch( join ) {
 			case BEVEL -> StrokeLineJoin.BEVEL;
 			case MITER -> StrokeLineJoin.MITER;
