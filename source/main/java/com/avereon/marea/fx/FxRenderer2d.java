@@ -361,22 +361,6 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	@Override
-	public void drawHRule( double position, Pen pen ) {
-		screenSetup();
-		getGraphicsContext2D().setStroke( pen.paint() );
-		getGraphicsContext2D().setLineWidth( pen.width() );
-		getGraphicsContext2D().strokeLine( 0, position, getWidth(), position );
-	}
-
-	@Override
-	public void drawVRule( double position, Pen pen ) {
-		screenSetup();
-		getGraphicsContext2D().setStroke( pen.paint() );
-		getGraphicsContext2D().setLineWidth( pen.width() );
-		getGraphicsContext2D().strokeLine( position, 0, position, getHeight() );
-	}
-
-	@Override
 	public Point2D localToParent( double x, double y ) {
 		return worldTransform.transform( x, y );
 	}
@@ -494,6 +478,36 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	public void fillText( double x, double y, double height, double rotate, String text, Font font ) {
 		textSetup( x, y, height, rotate, font );
 		getGraphicsContext2D().fillText( text, x * FONT_POINT_SIZE, -y * FONT_POINT_SIZE );
+	}
+
+	public void fillScreenOval( double x, double y, double w, double h ) {
+		screenSetup();
+		getGraphicsContext2D().fillOval( x, y, w, h );
+	}
+
+	public void drawScreenOval( double x, double y, double w, double h ) {
+		screenSetup();
+		getGraphicsContext2D().strokeOval( x, y, w, h );
+	}
+
+	public void fillScreenBox( double x, double y, double w, double h ) {
+		screenSetup();
+		getGraphicsContext2D().fillRect( x, y, w, h );
+	}
+
+	public void drawScreenBox( double x, double y, double w, double h ) {
+		screenSetup();
+		getGraphicsContext2D().strokeRect( x, y, w, h );
+	}
+
+	public void drawScreenHRule( double position ) {
+		screenSetup();
+		getGraphicsContext2D().strokeLine( 0, position, getWidth(), position );
+	}
+
+	public void drawScreenVRule( double position ) {
+		screenSetup();
+		getGraphicsContext2D().strokeLine( position, 0, position, getHeight() );
 	}
 
 	@Override
@@ -623,6 +637,22 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		textSetup( text );
 		double[] anchor = text.getAnchor();
 		getGraphicsContext2D().fillText( text.getText(), anchor[ 0 ] * FONT_POINT_SIZE, -anchor[ 1 ] * FONT_POINT_SIZE );
+	}
+
+	@Override
+	public void drawHRule( double position, Pen pen ) {
+		screenSetup();
+		getGraphicsContext2D().setStroke( pen.paint() );
+		getGraphicsContext2D().setLineWidth( pen.width() );
+		getGraphicsContext2D().strokeLine( 0, position, getWidth(), position );
+	}
+
+	@Override
+	public void drawVRule( double position, Pen pen ) {
+		screenSetup();
+		getGraphicsContext2D().setStroke( pen.paint() );
+		getGraphicsContext2D().setLineWidth( pen.width() );
+		getGraphicsContext2D().strokeLine( position, 0, position, getHeight() );
 	}
 
 	private void setPen( Pen pen ) {

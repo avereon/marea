@@ -31,4 +31,14 @@ public interface DirectRenderer2d extends Renderer {
 
 	void fillText( double x, double y, double height, double rotate, String text, Font font );
 
+	void drawScreenOval( double x, double y, double w, double h );
+
+	void fillScreenBox( double x, double y, double w, double h );
+
+	void drawScreenBox( double x, double y, double w, double h );
+
+	void drawScreenHRule( double position );
+
+	void drawScreenVRule( double position );
+
 }
