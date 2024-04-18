@@ -475,6 +475,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		getGraphicsContext2D().fillOval( cx - rx, cy - ry, 2 * rx, 2 * ry );
 	}
 
+	// This method is a workaround to deal with the fact that marker geometry is not translated
 	public void fillMarker( double x, double y, List<Path.Element> path ) {
 		shapeSetupWithOffset(x,y);
 		getGraphicsContext2D().setFillRule( FillRule.EVEN_ODD );
