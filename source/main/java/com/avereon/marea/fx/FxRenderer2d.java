@@ -416,8 +416,8 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		getGraphicsContext2D().setFill( paint );
 	}
 
-	public void drawBox( double x, double y, double w, double h ) {
-		shapeSetup();
+	public void drawBox( double x, double y, double w, double h, double rotate ) {
+		shapeSetupWithRotate( x, y, rotate );
 		getGraphicsContext2D().strokeRect( x, y, w, h );
 	}
 
@@ -465,8 +465,8 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		getGraphicsContext2D().strokeText( text, x * FONT_POINT_SIZE, -y * FONT_POINT_SIZE );
 	}
 
-	public void fillBox( double x, double y, double w, double h ) {
-		shapeSetup();
+	public void fillBox( double x, double y, double w, double h, double rotate ) {
+		shapeSetupWithRotate( x, y, rotate );
 		getGraphicsContext2D().fillRect( x, y, w, h );
 	}
 
@@ -477,7 +477,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	// This method is a workaround to deal with the fact that marker geometry is not translated
 	public void fillMarker( double x, double y, List<Path.Element> path ) {
-		shapeSetupWithOffset(x,y);
+		shapeSetupWithOffset( x, y );
 		getGraphicsContext2D().setFillRule( FillRule.EVEN_ODD );
 		getGraphicsContext2D().beginPath();
 		runPath( path );
