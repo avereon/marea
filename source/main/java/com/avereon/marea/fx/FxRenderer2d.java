@@ -453,8 +453,8 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	@Override
-	public void drawPath( double x, double y, List<Path.Element> path ) {
-		shapeSetupWithOffset( x, y );
+	public void drawPath( List<Path.Element> path ) {
+		shapeSetup();
 		getGraphicsContext2D().beginPath();
 		runPath( path );
 		getGraphicsContext2D().stroke();
@@ -485,7 +485,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	@Override
-	public void fillPath( double x, double y, List<Path.Element> path ) {
+	public void fillPath( List<Path.Element> path ) {
 		shapeSetup();
 		getGraphicsContext2D().setFillRule( FillRule.EVEN_ODD );
 		getGraphicsContext2D().beginPath();

@@ -38,7 +38,7 @@ public class Path implements Shape2d, Shape3d {
 	private final boolean closed;
 
 	public Path() {
-		this( null, 0.0 );
+		this( null, 0.0, false );
 	}
 
 	public Path( double x, double y ) {
@@ -56,8 +56,8 @@ public class Path implements Shape2d, Shape3d {
 	public Path( double[] anchor, double rotate, boolean closed ) {
 		this.anchor = anchor;
 		this.rotate = rotate;
-		this.elements = new ArrayList<>();
 		this.closed = closed;
+		this.elements = new ArrayList<>();
 		if( anchor != null ) move( anchor[ 0 ], anchor[ 1 ] );
 	}
 
