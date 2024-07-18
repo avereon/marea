@@ -46,7 +46,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	 * font engine does not like really large values either. A value between 1e2
 	 * and 1e6 is recommended.
 	 */
-	// NOTE On 14 Apr 2024 this value was reduced to 1e2
+	// NOTE On 15 Apr 2024 this value was reduced to 72
 	private static final double FONT_POINT_SIZE = 72;
 
 	// Transforms ---------------------------------------------------------------
