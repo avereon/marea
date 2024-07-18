@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Paint;
@@ -453,7 +454,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	@Override
-	public void drawPath( List<Path.Element> path ) {
+	public void drawPath( List<Path.Step> path ) {
 		shapeSetup();
 		getGraphicsContext2D().beginPath();
 		runPath( path );
@@ -475,17 +476,8 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		getGraphicsContext2D().fillOval( cx - rx, cy - ry, 2 * rx, 2 * ry );
 	}
 
-	// This method is a workaround to deal with the fact that marker geometry is not translated
-	public void fillMarker( double x, double y, List<Path.Element> path ) {
-		shapeSetupWithOffset( x, y );
-		getGraphicsContext2D().setFillRule( FillRule.EVEN_ODD );
-		getGraphicsContext2D().beginPath();
-		runPath( path );
-		getGraphicsContext2D().fill();
-	}
-
 	@Override
-	public void fillPath( List<Path.Element> path ) {
+	public void fillPath( List<Path.Step> path ) {
 		shapeSetup();
 		getGraphicsContext2D().setFillRule( FillRule.EVEN_ODD );
 		getGraphicsContext2D().beginPath();
@@ -607,7 +599,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	private void drawPath( Path path ) {
 		shapeSetup( path );
 		getGraphicsContext2D().beginPath();
-		runPath( path.getElements() );
+		runPath( path.getSteps() );
 		getGraphicsContext2D().stroke();
 	}
 
@@ -647,7 +639,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	private void fillPath( Path path ) {
 		shapeSetup( path );
 		getGraphicsContext2D().beginPath();
-		runPath( path.getElements() );
+		runPath( path.getSteps() );
 		getGraphicsContext2D().fill();
 	}
 
@@ -813,16 +805,28 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		}
 	}
 
-	private void runPath( List<Path.Element> elements ) {
-		elements.forEach( e -> {
+	private void runPath( List<Path.Step> steps ) {
+		GraphicsContext gc = getGraphicsContext2D();
+
+		steps.forEach( e -> {
 			double[] data = e.data();
 			switch( e.command() ) {
-				case MOVE -> getGraphicsContext2D().moveTo( data[ 0 ], data[ 1 ] );
-				case ARC -> getGraphicsContext2D().arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], -data[ 4 ], -data[ 5 ] );
-				case CURVE -> getGraphicsContext2D().bezierCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
-				case LINE -> getGraphicsContext2D().lineTo( data[ 0 ], data[ 1 ] );
-				case QUAD -> getGraphicsContext2D().quadraticCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
-				case CLOSE -> getGraphicsContext2D().closePath();
+				// FIXME There is not an exact match in GraphicsContext for SVG arc
+				// There are two options:
+				//   1. Use arc() which is the closest numerical match
+				//   2. Use appendSVGPath() which is the easiest to implement
+
+				// This is closer to the SVG arc, but not exactly
+				case ARC -> gc.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], -data[ 4 ], -data[ 5 ] );
+				// This does line-arc-line
+				//case ARC -> gc.arcTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ] );
+
+
+				case MOVE -> gc.moveTo( data[ 0 ], data[ 1 ] );
+				case CURVE -> gc.bezierCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+				case LINE -> gc.lineTo( data[ 0 ], data[ 1 ] );
+				case QUAD -> gc.quadraticCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
+				case CLOSE -> gc.closePath();
 			}
 		} );
 	}

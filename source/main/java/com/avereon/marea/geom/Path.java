@@ -33,7 +33,7 @@ public class Path implements Shape2d, Shape3d {
 
 	private final double rotate;
 
-	private final List<Element> elements;
+	private final List<Step> steps;
 
 	private final boolean closed;
 
@@ -57,7 +57,7 @@ public class Path implements Shape2d, Shape3d {
 		this.anchor = anchor;
 		this.rotate = rotate;
 		this.closed = closed;
-		this.elements = new ArrayList<>();
+		this.steps = new ArrayList<>();
 		if( anchor != null ) move( anchor[ 0 ], anchor[ 1 ] );
 	}
 
@@ -67,7 +67,7 @@ public class Path implements Shape2d, Shape3d {
 	}
 
 	public Path move( double bx, double by ) {
-		elements.add( new Element( Command.MOVE, new double[]{ bx, by } ) );
+		steps.add( new Step( Command.MOVE, new double[]{ bx, by } ) );
 		return this;
 	}
 
@@ -76,30 +76,37 @@ public class Path implements Shape2d, Shape3d {
 	}
 
 	public Path line( double[] point ) {
-		elements.add( new Element( Command.LINE, point ) );
+		steps.add( new Step( Command.LINE, point ) );
 		return this;
 	}
 
+	@Deprecated
 	public Path arc( double x, double y, double rx, double ry, double start, double extent ) {
-		elements.add( new Element( Command.ARC, new double[]{ x, y, rx, ry, start, extent } ) );
+		steps.add( new Step( Command.ARC, new double[]{ x, y, rx, ry, start, extent } ) );
+		return this;
+	}
+
+	public Path arc( double rx, double ry, double rotate, double x, double y, boolean largeArc, boolean sweep ) {
+		//elements.add( new Element( Command.ARC, new double[]{ x, y, rx, ry, start, extent } ) );
 		return this;
 	}
 
 	public Path curve( double bx, double by, double cx, double cy, double dx, double dy ) {
-		elements.add( new Element( Command.CURVE, new double[]{ bx, by, cx, cy, dx, dy } ) );
+		steps.add( new Step( Command.CURVE, new double[]{ bx, by, cx, cy, dx, dy } ) );
 		return this;
 	}
 
 	public Path quad( double bx, double by, double cx, double cy ) {
-		elements.add( new Element( Command.QUAD, new double[]{ bx, by, cx, cy } ) );
+		steps.add( new Step( Command.QUAD, new double[]{ bx, by, cx, cy } ) );
 		return this;
 	}
 
 	public Path close() {
-		elements.add( new Element( Command.CLOSE, new double[]{} ) );
+		steps.add( new Step( Command.CLOSE, new double[]{} ) );
 		return this;
 	}
 
-	public record Element(Command command, double[] data) {}
+	// FIXME Do I need to add the largeArc and sweep parameters to Element for the arc command?
+	public record Step(Command command, double[] data) {}
 
 }
