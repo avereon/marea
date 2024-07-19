@@ -1,5 +1,6 @@
 package com.avereon.marea.fx;
 
+import com.avereon.curve.math.Geometry;
 import com.avereon.curve.math.Point;
 import com.avereon.curve.math.Vector;
 import com.avereon.marea.*;
@@ -807,28 +808,41 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	private void runPath( List<Path.Step> steps ) {
 		GraphicsContext gc = getGraphicsContext2D();
+		double[] start = new double[]{ 0, 0 };
+		double[] prior = new double[]{ 0, 0 };
 
-		steps.forEach( e -> {
-			double[] data = e.data();
-			switch( e.command() ) {
-				// FIXME There is not an exact match in GraphicsContext for SVG arc
-				// There are two options:
-				//   1. Use arc() which is the closest numerical match
-				//   2. Use appendSVGPath() which is the easiest to implement
-
-				// This is closer to the SVG arc, but not exactly
-				case ARC -> gc.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], -data[ 4 ], -data[ 5 ] );
-				// This does line-arc-line
-				//case ARC -> gc.arcTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ] );
-
-
-				case MOVE -> gc.moveTo( data[ 0 ], data[ 1 ] );
-				case CURVE -> gc.bezierCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
-				case LINE -> gc.lineTo( data[ 0 ], data[ 1 ] );
-				case QUAD -> gc.quadraticCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
-				case CLOSE -> gc.closePath();
+		for( Path.Step step : steps ) {
+			double[] data = step.data();
+			switch( step.command() ) {
+				case MOVE -> {
+					gc.moveTo( data[ 0 ], data[ 1 ] );
+					prior = Point.of( data[ 0 ], data[ 1 ] );
+					start = prior;
+				}
+				case CURVE -> {
+					gc.bezierCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+					prior = Point.of( data[ 4 ], data[ 5 ] );
+				}
+				case LINE -> {
+					gc.lineTo( data[ 0 ], data[ 1 ] );
+					prior = Point.of( data[ 0 ], data[ 1 ] );
+				}
+				case ARC -> {
+					double[] endpointData = new double[]{ data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], Math.toRadians( data[ 4 ] ), data[ 5 ], data[ 6 ] };
+					data = Geometry.arcEndpointToCenter( prior, endpointData );
+					gc.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], -Math.toDegrees( data[ 4 ] ), -Math.toDegrees( data[ 5 ] ) );
+					prior = Point.of( endpointData[ 0 ], endpointData[ 1 ] );
+				}
+				case QUAD -> {
+					gc.quadraticCurveTo( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
+					prior = Point.of( data[ 2 ], data[ 3 ] );
+				}
+				case CLOSE -> {
+					gc.closePath();
+					prior = start;
+				}
 			}
-		} );
+		}
 	}
 
 	private StrokeLineCap getCap( LineCap cap ) {

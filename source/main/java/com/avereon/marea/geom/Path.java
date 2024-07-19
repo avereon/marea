@@ -80,14 +80,8 @@ public class Path implements Shape2d, Shape3d {
 		return this;
 	}
 
-	@Deprecated
-	public Path arc( double x, double y, double rx, double ry, double start, double extent ) {
-		steps.add( new Step( Command.ARC, new double[]{ x, y, rx, ry, start, extent } ) );
-		return this;
-	}
-
-	public Path arc( double rx, double ry, double rotate, double x, double y, boolean largeArc, boolean sweep ) {
-		//elements.add( new Element( Command.ARC, new double[]{ x, y, rx, ry, start, extent } ) );
+	public Path arc( double x, double y, double rx, double ry, double rotate, double largeArc, double sweep ) {
+		steps.add( new Step( Command.ARC, new double[]{ x, y, rx, ry, rotate, largeArc, sweep } ) );
 		return this;
 	}
 
@@ -106,7 +100,6 @@ public class Path implements Shape2d, Shape3d {
 		return this;
 	}
 
-	// FIXME Do I need to add the largeArc and sweep parameters to Element for the arc command?
 	public record Step(Command command, double[] data) {}
 
 }
