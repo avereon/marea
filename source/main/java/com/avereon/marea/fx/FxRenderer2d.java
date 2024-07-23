@@ -85,9 +85,9 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	private double negativeZoomStep;
 
-	private Point2D dragViewpoint;
+	private Point3D dragViewpoint;
 
-	private Point2D dragAnchor;
+	private Point3D dragAnchor;
 
 	public FxRenderer2d() {
 		this( 0, 0 );
@@ -772,7 +772,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	private void doOnDragBegin( MouseEvent e ) {
 		dragViewpoint = getViewpoint();
-		dragAnchor = new Point2D( e.getX(), e.getY() );
+		dragAnchor = new Point3D( e.getX(), e.getY(), e.getZ() );
 	}
 
 	private void doOnDragMouse( MouseEvent e ) {

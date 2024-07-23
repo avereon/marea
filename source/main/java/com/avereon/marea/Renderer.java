@@ -288,8 +288,8 @@ public interface Renderer {
 	 *
 	 * @return The viewpoint as a point.
 	 */
-	default Point2D getViewpoint() {
-		return new Point2D( getViewpointX(), getViewpointY() );
+	default Point3D getViewpoint() {
+		return new Point3D( getViewpointX(), getViewpointY(), 0 );
 	}
 
 	/**
@@ -298,7 +298,7 @@ public interface Renderer {
 	 *
 	 * @param viewpoint The viewpoint as a point.
 	 */
-	default void setViewpoint( Point2D viewpoint ) {
+	default void setViewpoint( Point3D viewpoint ) {
 		setViewpoint( viewpoint.getX(), viewpoint.getY() );
 	}
 
