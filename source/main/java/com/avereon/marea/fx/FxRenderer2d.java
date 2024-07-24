@@ -390,6 +390,14 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		}
 	}
 
+	public void setDrawPen( Pen pen ) {
+		setDrawPen( pen.paint(), pen.width(), pen.cap(), pen.join(), pen.dashes(), pen.offset() );
+	}
+
+	public void setDrawPen( Pen pen, boolean text ) {
+		setDrawPen( pen.paint(), pen.width(), pen.cap(), pen.join(), pen.dashes(), pen.offset(), text );
+	}
+
 	public void setDrawPen( Paint paint, double width, LineCap cap, LineJoin join, double[] dashes, double offset ) {
 		setDrawPen( paint, width, cap, join, dashes, offset, false );
 	}

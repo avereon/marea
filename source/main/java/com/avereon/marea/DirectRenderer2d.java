@@ -11,6 +11,10 @@ public interface DirectRenderer2d extends Renderer {
 
 	void setFillPen( Paint paint );
 
+	void setDrawPen( Pen pen );
+
+	void setDrawPen( Pen pen, boolean text );
+
 	void drawLine( double x1, double y1, double x2, double y2 );
 
 	void drawEllipse( double cx, double cy, double rx, double ry, double rotate );
