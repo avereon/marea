@@ -31,7 +31,28 @@ public interface DirectRenderer2d extends Renderer {
 
 	void fillEllipse( double cx, double cy, double rx, double ry, double rotate );
 
+	@Deprecated
 	void fillPath( List<Path.Step> path );
+
+	void startPath();
+
+	void moveTo( double x, double y );
+
+	void lineTo( double x, double y );
+
+	void arcTo( double x, double y, double rx, double ry, double rotate, boolean large, boolean sweep );
+
+	void arcTo( double cx, double cy, double rx, double ry, double start, double extent );
+
+	void pathQuadTo( double x1, double y1, double x2, double y2 );
+
+	void pathCubicTo( double x1, double y1, double x2, double y2, double x3, double y3 );
+
+	void pathClose();
+
+	void drawPath();
+
+	void fillPath();
 
 	void fillText( double x, double y, double height, double rotate, String text, Font font );
 

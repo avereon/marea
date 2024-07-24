@@ -89,6 +89,9 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	private Point3D dragAnchor;
 
+	//private double[] pathStart = new double[]{ 0, 0 };
+	private double[] pathPrior = new double[]{ 0, 0 };
+
 	public FxRenderer2d() {
 		this( 0, 0 );
 	}
@@ -491,6 +494,63 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		getGraphicsContext2D().setFillRule( FillRule.EVEN_ODD );
 		getGraphicsContext2D().beginPath();
 		runPath( path );
+		getGraphicsContext2D().fill();
+	}
+
+	@Override
+	public void startPath() {
+		shapeSetup();
+		getGraphicsContext2D().beginPath();
+	}
+
+	@Override
+	public void moveTo( double x, double y ) {
+		getGraphicsContext2D().moveTo( x, y );
+		pathPrior = new double[]{ x, y };
+	}
+
+	@Override
+	public void lineTo( double x, double y ) {
+		getGraphicsContext2D().lineTo( x, y );
+		pathPrior = new double[]{ x, y };
+	}
+
+	@Override
+	public void arcTo( double x, double y, double rx, double ry, double rotate, boolean large, boolean sweep ) {
+		double[] data = Geometry.arcEndpointToCenter( pathPrior, new double[]{ x, y, rx, ry, rotate, large ? 1.0 : 0.0, sweep ? 1.0 : 0.0 } );
+		getGraphicsContext2D().arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+		pathPrior = new double[]{ x, y };
+	}
+
+	@Override
+	public void arcTo( double cx, double cy, double rx, double ry, double start, double extent ) {
+		getGraphicsContext2D().arc( cx, cy, rx, ry, start, extent );
+		double[][] data = Geometry.arcEndPoints( cx, cy, rx, ry, 0.0, start, extent );
+		pathPrior = data[ 1 ];
+	}
+
+	@Override
+	public void pathQuadTo( double x1, double y1, double x2, double y2 ) {
+		getGraphicsContext2D().quadraticCurveTo( x1, y1, x2, y2 );
+	}
+
+	@Override
+	public void pathCubicTo( double x1, double y1, double x2, double y2, double x3, double y3 ) {
+		getGraphicsContext2D().bezierCurveTo( x1, y1, x2, y2, x3, y3 );
+	}
+
+	@Override
+	public void pathClose() {
+		getGraphicsContext2D().closePath();
+	}
+
+	@Override
+	public void drawPath() {
+		getGraphicsContext2D().stroke();
+	}
+
+	@Override
+	public void fillPath() {
 		getGraphicsContext2D().fill();
 	}
 
