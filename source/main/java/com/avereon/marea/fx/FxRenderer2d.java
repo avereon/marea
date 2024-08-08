@@ -801,10 +801,10 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		return affine;
 	}
 
-	private Affine offset( Affine transform, double[] anchor ) {
+	private Affine offset( Affine transform, double anchorX, double anchorY ) {
 		Affine affine = new Affine();
 		affine.append( transform );
-		affine.appendTranslation( anchor[ 0 ], anchor[ 1 ] );
+		affine.appendTranslation( anchorX, anchorY );
 		return affine;
 	}
 
@@ -812,14 +812,6 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		Affine affine = new Affine();
 		affine.append( transform );
 		affine.appendRotation( rotate, anchorX, anchorY );
-		return affine;
-	}
-
-	@Deprecated
-	private Affine rotate( Affine transform, double rotate, double[] anchor ) {
-		Affine affine = new Affine();
-		affine.append( transform );
-		affine.appendRotation( rotate, anchor[ 0 ], anchor[ 1 ] );
 		return affine;
 	}
 
@@ -833,22 +825,14 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	private void shapeSetupWithOffset( double x, double y ) {
-		getGraphicsContext2D().setTransform( offset( worldTransform, new double[]{ x, y } ) );
+		getGraphicsContext2D().setTransform( offset( worldTransform,  x, y ) );
 	}
 
 	private void shapeSetupWithRotate( double x, double y, double rotate ) {
 		if( rotate == 0.0 ) {
 			shapeSetupWithOffset( x, y );
 		} else {
-			shapeSetupWithRotate( new double[]{ x, y }, rotate );
-		}
-	}
-
-	private void shapeSetupWithRotate( double[] anchor, double rotate ) {
-		if( rotate == 0.0 ) {
-			shapeSetupWithOffset( anchor[ 0 ], anchor[ 1 ] );
-		} else {
-			getGraphicsContext2D().setTransform( rotate( worldTransform, rotate, anchor[ 0 ], anchor[ 1 ] ) );
+			getGraphicsContext2D().setTransform( rotate( worldTransform, rotate, x, y ) );
 		}
 	}
 
