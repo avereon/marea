@@ -430,7 +430,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	public void drawBox( double x, double y, double w, double h, double rotate ) {
-		shapeSetupWithRotate( x, y, rotate );
+		shapeSetup( x, y, rotate );
 		getGraphicsContext2D().strokeRect( x, y, w, h );
 	}
 
@@ -441,12 +441,12 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	public void drawEllipse( double cx, double cy, double rx, double ry, double rotate ) {
-		shapeSetupWithRotate( cx, cy, rotate );
+		shapeSetup( cx, cy, rotate );
 		getGraphicsContext2D().strokeOval( cx - rx, cy - ry, 2 * rx, 2 * ry );
 	}
 
 	public void drawArc( double cx, double cy, double rx, double ry, double rotate, double start, double extent ) {
-		shapeSetupWithRotate( cx, cy, rotate );
+		shapeSetup( cx, cy, rotate );
 		getGraphicsContext2D().strokeArc( cx - rx, cy - ry, 2 * rx, 2 * ry, -start, -extent, ArcType.OPEN );
 	}
 
@@ -482,12 +482,12 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	public void fillBox( double x, double y, double w, double h, double rotate ) {
-		shapeSetupWithRotate( x, y, rotate );
+		shapeSetup( x, y, rotate );
 		getGraphicsContext2D().fillRect( x, y, w, h );
 	}
 
 	public void fillEllipse( double cx, double cy, double rx, double ry, double rotate ) {
-		shapeSetupWithRotate( cx, cy, rotate );
+		shapeSetup( cx, cy, rotate );
 		getGraphicsContext2D().fillOval( cx - rx, cy - ry, 2 * rx, 2 * ry );
 	}
 
@@ -760,7 +760,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	private void textSetup( double x, double y, double height, double rotate, Font font ) {
 		if( font == null ) font = new Font();
 		getGraphicsContext2D().setFont( Font.toFxFont( font.derive( height * FONT_POINT_SIZE ) ) );
-		double[] anchor = Vector.scale(  x, y , FONT_POINT_SIZE, -FONT_POINT_SIZE );
+		double[] anchor = Vector.scale( x, y, FONT_POINT_SIZE, -FONT_POINT_SIZE );
 		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, anchor[ 0 ], anchor[ 1 ] ) );
 	}
 
@@ -801,13 +801,6 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		return affine;
 	}
 
-	private Affine offset( Affine transform, double anchorX, double anchorY ) {
-		Affine affine = new Affine();
-		affine.append( transform );
-		affine.appendTranslation( anchorX, anchorY );
-		return affine;
-	}
-
 	private Affine rotate( Affine transform, double rotate, double anchorX, double anchorY ) {
 		Affine affine = new Affine();
 		affine.append( transform );
@@ -824,23 +817,15 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		getGraphicsContext2D().setTransform( worldTransform );
 	}
 
-	private void shapeSetupWithOffset( double x, double y ) {
-		getGraphicsContext2D().setTransform( offset( worldTransform,  x, y ) );
-	}
-
-	private void shapeSetupWithRotate( double x, double y, double rotate ) {
-		if( rotate == 0.0 ) {
-			shapeSetupWithOffset( x, y );
-		} else {
-			getGraphicsContext2D().setTransform( rotate( worldTransform, rotate, x, y ) );
-		}
+	private void shapeSetup( double x, double y, double rotate ) {
+		getGraphicsContext2D().setTransform( rotate( worldTransform, rotate, x, y ) );
 	}
 
 	@Deprecated
 	private void shapeSetup( Shape2d shape ) {
 		// set transform to screen
 		double[] anchor = shape.getAnchor();
-		shapeSetupWithRotate( anchor[ 0 ], anchor[ 1 ], shape.getRotate() );
+		shapeSetup( anchor[ 0 ], anchor[ 1 ], shape.getRotate() );
 	}
 
 	private void doOnDragBegin( MouseEvent e ) {
