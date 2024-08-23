@@ -35,14 +35,14 @@ public class FxRenderer2dTest {
 
 	@Test
 	void testLengthUnitChangeUpdatesWorldTransform() {
-		double p = RenderUnit.CENTIMETER.convert( FxRenderer2d.DEFAULT_PPI );
+		double p = RenderUnit.CENTIMETER.convert( FxRenderer2d.DEFAULT_DPI );
 		renderer.setLengthUnit( RenderUnit.CENTIMETER );
 		assertThat( renderer.localToParent( 1, 1 ) ).isEqualTo( new Point2D( 100 + p, 100 - p ) );
 	}
 
 	@Test
 	void testDpiChangeUpdatesWorldTransform() {
-		renderer.setPpi( 72, 72 );
+		renderer.setDpi( 72, 72 );
 		assertThat( renderer.localToParent( 1, 1 ) ).isEqualTo( new Point2D( 172, 28 ) );
 	}
 

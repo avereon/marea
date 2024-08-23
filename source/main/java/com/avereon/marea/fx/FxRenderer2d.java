@@ -34,7 +34,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	public static final RenderUnit DEFAULT_LENGTH_UNIT = RenderUnit.CENTIMETER;
 
-	public static final double DEFAULT_PPI = 72;
+	public static final double DEFAULT_DPI = 72;
 
 	public static final double DEFAULT_ZOOM = 1.0;
 
@@ -63,9 +63,9 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	private ObjectProperty<RenderUnit> lengthUnit;
 
-	private DoubleProperty ppiX;
+	private DoubleProperty dpiX;
 
-	private DoubleProperty ppiY;
+	private DoubleProperty dpiY;
 
 	private DoubleProperty zoomX;
 
@@ -108,8 +108,8 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		setOnMouseReleased( this::doOnDragFinish );
 
 		lengthUnitProperty().addListener( ( p, o, n ) -> updateWorldTransforms( n,
-			getPpiX(),
-			getPpiY(),
+			getDpiX(),
+			getDpiY(),
 			getZoomX(),
 			getZoomY(),
 			getViewpointX(),
@@ -119,8 +119,8 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 			getHeight()
 		) );
 		widthProperty().addListener( ( p, o, n ) -> updateWorldTransforms( getLengthUnit(),
-			getPpiX(),
-			getPpiY(),
+			getDpiX(),
+			getDpiY(),
 			getZoomX(),
 			getZoomY(),
 			getViewpointX(),
@@ -130,8 +130,8 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 			getHeight()
 		) );
 		heightProperty().addListener( ( p, o, n ) -> updateWorldTransforms( getLengthUnit(),
-			getPpiX(),
-			getPpiY(),
+			getDpiX(),
+			getDpiY(),
 			getZoomX(),
 			getZoomY(),
 			getViewpointX(),
@@ -141,7 +141,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 			n.doubleValue()
 		) );
 
-		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
 	}
 
 	@Override
@@ -167,37 +167,37 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	@Override
-	public double getPpiX() {
-		return ppiX == null ? DEFAULT_PPI : ppiXProperty().getValue();
+	public double getDpiX() {
+		return dpiX == null ? DEFAULT_DPI : dpiXProperty().getValue();
 	}
 
 	@Override
-	public void setPpiX( double ppiX ) {
-		updateWorldTransforms( getLengthUnit(), ppiX, getPpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
-		ppiXProperty().set( ppiX );
+	public void setDpiX( double dpiX ) {
+		updateWorldTransforms( getLengthUnit(), dpiX, getDpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
+		dpiXProperty().set( dpiX );
 	}
 
 	@Override
-	public DoubleProperty ppiXProperty() {
-		if( ppiX == null ) ppiX = new SimpleDoubleProperty( DEFAULT_PPI );
-		return ppiX;
+	public DoubleProperty dpiXProperty() {
+		if( dpiX == null ) dpiX = new SimpleDoubleProperty( DEFAULT_DPI );
+		return dpiX;
 	}
 
 	@Override
-	public double getPpiY() {
-		return ppiY == null ? DEFAULT_PPI : ppiYProperty().getValue();
+	public double getDpiY() {
+		return dpiY == null ? DEFAULT_DPI : dpiYProperty().getValue();
 	}
 
 	@Override
-	public void setPpiY( double ppiY ) {
-		updateWorldTransforms( getLengthUnit(), getPpiX(), ppiY, getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
-		ppiYProperty().set( ppiY );
+	public void setDpiY( double dpiY ) {
+		updateWorldTransforms( getLengthUnit(), getDpiX(), dpiY, getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
+		dpiYProperty().set( dpiY );
 	}
 
 	@Override
-	public DoubleProperty ppiYProperty() {
-		if( ppiY == null ) ppiY = new SimpleDoubleProperty( DEFAULT_PPI );
-		return ppiY;
+	public DoubleProperty dpiYProperty() {
+		if( dpiY == null ) dpiY = new SimpleDoubleProperty( DEFAULT_DPI );
+		return dpiY;
 	}
 
 	/**
@@ -208,10 +208,10 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	 * @param dpiY The DPI in the y direction.
 	 */
 	@Override
-	public void setPpi( double dpiX, double dpiY ) {
+	public void setDpi( double dpiX, double dpiY ) {
 		updateWorldTransforms( getLengthUnit(), dpiX, dpiY, getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
-		ppiXProperty().set( dpiX );
-		ppiYProperty().set( dpiY );
+		dpiXProperty().set( dpiX );
+		dpiYProperty().set( dpiY );
 	}
 
 	/**
@@ -224,7 +224,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void setZoomX( double zoomX ) {
-		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), zoomX, getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), zoomX, getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
 		zoomXProperty().set( zoomX );
 	}
 
@@ -241,7 +241,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void setZoomY( double zoomY ) {
-		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), getZoomX(), zoomY, getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), zoomY, getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
 		zoomYProperty().set( zoomY );
 	}
 
@@ -265,7 +265,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	 */
 	@Override
 	public void setZoom( double zoomX, double zoomY ) {
-		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), zoomX, zoomY, getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), zoomX, zoomY, getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
 		zoomXProperty().set( zoomX );
 		zoomYProperty().set( zoomY );
 	}
@@ -295,7 +295,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void setViewpointX( double viewpointX ) {
-		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), getZoomX(), getZoomY(), viewpointX, getViewpointY(), getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), getZoomY(), viewpointX, getViewpointY(), getViewRotate(), getWidth(), getHeight() );
 		viewpointXProperty().set( viewpointX );
 	}
 
@@ -312,7 +312,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void setViewpointY( double viewpointY ) {
-		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), getZoomX(), getZoomY(), getViewpointX(), viewpointY, getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointX(), viewpointY, getViewRotate(), getWidth(), getHeight() );
 		viewpointYProperty().set( viewpointY );
 	}
 
@@ -331,7 +331,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	 */
 	@Override
 	public void setViewpoint( double viewpointX, double viewpointY ) {
-		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), getZoomX(), getZoomY(), viewpointX, viewpointY, getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), getZoomY(), viewpointX, viewpointY, getViewRotate(), getWidth(), getHeight() );
 		viewpointXProperty().set( viewpointX );
 		viewpointYProperty().set( viewpointY );
 	}
@@ -343,7 +343,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void setViewRotate( double viewRotate ) {
-		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), viewRotate, getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), viewRotate, getWidth(), getHeight() );
 		viewRotateProperty().set( viewRotate );
 	}
 
@@ -358,7 +358,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		double y = viewpointY + (getViewpointY() - viewpointY) * getZoomY() / zoomY;
 
 		// Set the new zoom and viewpoint
-		updateWorldTransforms( getLengthUnit(), getPpiX(), getPpiY(), zoomX, zoomY, x, y, getViewRotate(), getWidth(), getHeight() );
+		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), zoomX, zoomY, x, y, getViewRotate(), getWidth(), getHeight() );
 		viewpointXProperty().set( x );
 		viewpointYProperty().set( y );
 		zoomXProperty().set( zoomX );
@@ -844,8 +844,8 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	private void dragMove( double x, double y ) {
-		double dx = (x - dragAnchor.getX()) / getLengthUnit().convert( getPpiX() * getZoomX() );
-		double dy = (y - dragAnchor.getY()) / getLengthUnit().convert( getPpiY() * getZoomY() );
+		double dx = (x - dragAnchor.getX()) / getLengthUnit().convert( getDpiX() * getZoomX() );
+		double dy = (y - dragAnchor.getY()) / getLengthUnit().convert( getDpiY() * getZoomY() );
 		setViewpoint( dragViewpoint.getX() - dx, dragViewpoint.getY() + dy );
 	}
 

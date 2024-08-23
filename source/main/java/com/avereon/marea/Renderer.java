@@ -79,7 +79,7 @@ public interface Renderer {
 	 * @return The renderer PPI as a point.
 	 */
 	default Point2D getPpi() {
-		return new Point2D( getPpiX(), getPpiY() );
+		return new Point2D( getDpiX(), getDpiY() );
 	}
 
 	/**
@@ -87,8 +87,8 @@ public interface Renderer {
 	 *
 	 * @param ppi The PPI as a point.
 	 */
-	default void setPpi( Point2D ppi ) {
-		setPpi( ppi.getX(), ppi.getY() );
+	default void setDpi( Point2D ppi ) {
+		setDpi( ppi.getX(), ppi.getY() );
 	}
 
 	/**
@@ -97,9 +97,9 @@ public interface Renderer {
 	 * @param ppiX The PPI in the x direction.
 	 * @param ppiY The PPI in the y direction.
 	 */
-	default void setPpi( double ppiX, double ppiY ) {
-		setPpiX( ppiX );
-		setPpiY( ppiY );
+	default void setDpi( double ppiX, double ppiY ) {
+		setDpiX( ppiX );
+		setDpiY( ppiY );
 	}
 
 	/**
@@ -107,42 +107,42 @@ public interface Renderer {
 	 *
 	 * @return The PPI in the x direction.
 	 */
-	double getPpiX();
+	double getDpiX();
 
 	/**
 	 * Set the PPI in the x direction.
 	 *
-	 * @param ppiX The PPI in the x direction.
+	 * @param dpiX The PPI in the x direction.
 	 */
-	void setPpiX( double ppiX );
+	void setDpiX( double dpiX );
 
 	/**
 	 * Get the PPI in the x direction property.
 	 *
 	 * @return The PPI in the x direction property.
 	 */
-	DoubleProperty ppiXProperty();
+	DoubleProperty dpiXProperty();
 
 	/**
 	 * Get the PPI in the y direction.
 	 *
 	 * @return The PPI in the y direction.
 	 */
-	double getPpiY();
+	double getDpiY();
 
 	/**
 	 * Set the PPI in the y direction.
 	 *
-	 * @param ppiY The PPI in the y direction.
+	 * @param dpiY The PPI in the y direction.
 	 */
-	void setPpiY( double ppiY );
+	void setDpiY( double dpiY );
 
 	/**
 	 * Get the PPI in the y direction property.
 	 *
 	 * @return The PPI in the y direction property.
 	 */
-	DoubleProperty ppiYProperty();
+	DoubleProperty dpiYProperty();
 
 	/**
 	 * Convenience method to get the zoom factor in both the x and y direction as

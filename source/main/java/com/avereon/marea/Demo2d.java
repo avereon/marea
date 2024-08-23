@@ -32,7 +32,7 @@ public class Demo2d extends Application {
 		double dpi = screen.getDpi();
 
 		FxRenderer2d renderer = new FxRenderer2d( 960, 540 );
-		renderer.setPpi( dpi, dpi );
+		renderer.setDpi( dpi, dpi );
 		renderer.setZoom( 10, 10 );
 		renderer.setViewpoint( 0.5, 0.0 );
 		//renderer.setViewRotate( 45 );
