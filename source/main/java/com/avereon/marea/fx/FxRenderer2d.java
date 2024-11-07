@@ -34,7 +34,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	public static final RenderUnit DEFAULT_LENGTH_UNIT = RenderUnit.CENTIMETER;
 
-	public static final double DEFAULT_DPI = 72;
+	public static final double DEFAULT_DPI = 72.0;
 
 	public static final double DEFAULT_ZOOM = 1.0;
 
@@ -107,17 +107,6 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		setOnMouseDragged( this::doOnDragMouse );
 		setOnMouseReleased( this::doOnDragFinish );
 
-		lengthUnitProperty().addListener( ( p, o, n ) -> updateWorldTransforms( n,
-			getDpiX(),
-			getDpiY(),
-			getZoomX(),
-			getZoomY(),
-			getViewpointX(),
-			getViewpointY(),
-			getViewRotate(),
-			getWidth(),
-			getHeight()
-		) );
 		widthProperty().addListener( ( p, o, n ) -> updateWorldTransforms( getLengthUnit(),
 			getDpiX(),
 			getDpiY(),
@@ -141,6 +130,10 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 			n.doubleValue()
 		) );
 
+		updateWorldTransforms();
+	}
+
+	private void updateWorldTransforms() {
 		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
 	}
 
@@ -150,6 +143,11 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		getGraphicsContext2D().clearRect( 0, 0, getWidth(), getHeight() );
 	}
 
+	public void setSize( double width, double height ) {
+		super.setWidth( width );
+		super.setHeight( height );
+	}
+
 	@Override
 	public RenderUnit getLengthUnit() {
 		return lengthUnit == null ? DEFAULT_LENGTH_UNIT : lengthUnit.get();
@@ -157,6 +155,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	@Override
 	public void setLengthUnit( RenderUnit unit ) {
+		updateWorldTransforms( unit, getDpiX(), getDpiY(), getZoomX(), getZoomY(), getViewpointX(), getViewpointY(), getViewRotate(), getWidth(), getHeight() );
 		lengthUnitProperty().set( unit );
 	}
 
@@ -363,6 +362,19 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		viewpointYProperty().set( y );
 		zoomXProperty().set( zoomX );
 		zoomYProperty().set( zoomY );
+	}
+
+	public void setView( double viewpointX, double viewpointY, double rotate, double zoomX, double zoomY ) {
+		updateWorldTransforms( getLengthUnit(), getDpiX(), getDpiY(), zoomX, zoomY, viewpointX, viewpointY, rotate, getWidth(), getHeight() );
+		viewpointXProperty().set( viewpointX );
+		viewpointYProperty().set( viewpointY );
+		viewRotateProperty().set( rotate );
+		zoomXProperty().set( zoomX );
+		zoomYProperty().set( zoomY );
+	}
+
+	public Affine getWorldTransform() {
+		return worldTransform;
 	}
 
 	@Override
@@ -769,6 +781,8 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		worldTextTransform = createWorldTransform( unit, dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, rotate, width, height, true );
 	}
 
+	public static boolean logEnabled = false;
+
 	private static Affine createWorldTransform(
 		RenderUnit unit, double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double rotate, double width, double height, boolean isFontTransform
 	) {
@@ -776,27 +790,51 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		if( isFontTransform ) {
 			scale = FONT_POINT_SIZE;
 			rotate = -rotate;
-		} else {
 			zoomY = -zoomY;
 			viewpointY = -viewpointY;
 		}
 
+		//System.out.println( "width: " + width + ", height: " + height );
+
 		Affine affine = new Affine();
 
-		// Center the origin before applying scale and zoom
-		affine.append( Transform.translate( 0.5 * width, 0.5 * height ) );
+		//		// NOTE the following transformations are applied in reverse order
+		//
+		//		// Center the origin before applying scale and zoom
+		//		affine.append( Transform.translate( 0.5 * width, 0.5 * height ) );
+		//
+		//		// Scale for screen DPI
+		//		affine.append( Transform.scale( unit.convert( dpiX ), unit.convert( dpiY ) ) );
+		//
+		//		// Apply the zoom factor
+		//		affine.append( Transform.scale( zoomX / scale, zoomY / scale ) );
+		//
+		//		// Rotate the view
+		//		affine.append( Transform.rotate( rotate, -viewpointX * scale, viewpointY * scale ) );
+		//
+		//		// Center the viewpoint. The viewpoint is given in world coordinates.
+		//		affine.append( Transform.translate( -viewpointX * scale, viewpointY * scale ) );
 
-		// Scale for screen DPI
-		affine.append( Transform.scale( unit.convert( dpiX ), unit.convert( dpiY ) ) );
+		// Move model viewpoint to model origin
+		affine.prependTranslation( -viewpointX * scale, -viewpointY * scale );
+		//if( logEnabled && !isFontTransform ) System.out.println( "viewpoint: " + viewpointX + ", " + viewpointY );
 
-		// Apply the zoom factor
-		affine.append( Transform.scale( zoomX / scale, zoomY / scale ) );
+		// Apply rotate
+		affine.prependRotation( rotate );
+		//if( logEnabled && !isFontTransform ) System.out.println( "rotate: " + rotate );
 
-		// Rotate the view
-		affine.append( Transform.rotate( rotate, -viewpointX * scale, viewpointY * scale ) );
+		// Flip the Y axis
+		affine.prependScale( 1, -1 );
 
-		// Center the viewpoint. The viewpoint is given in world coordinates.
-		affine.append( Transform.translate( -viewpointX * scale, viewpointY * scale ) );
+		// Apply DPI
+		affine.prependScale( unit.convert( dpiX ), unit.convert( dpiY ) );
+
+		// Apply zoom
+		affine.prependScale( zoomX / scale, zoomY / scale );
+
+		// Move model viewpoint back to node center
+		affine.prependTranslation( 0.5 * width, 0.5 * height );
+		//if( logEnabled && !isFontTransform ) System.out.println( affine.transform( 0, 0 ) );
 
 		return affine;
 	}
