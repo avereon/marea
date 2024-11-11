@@ -388,6 +388,11 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	@Override
+	public Point3D localToParent( Point3D point ) {
+		return worldTransform.transform( point );
+	}
+
+	@Override
 	public Point2D parentToLocal( double x, double y ) {
 		try {
 			return worldTransform.inverseTransform( x, y );
@@ -400,6 +405,15 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	public Point3D parentToLocal( double x, double y, double z ) {
 		try {
 			return worldTransform.inverseTransform( x, y, z );
+		} catch( NonInvertibleTransformException exception ) {
+			return null;
+		}
+	}
+
+	@Override
+	public Point3D parentToLocal( Point3D point ) {
+		try {
+			return worldTransform.inverseTransform( point );
 		} catch( NonInvertibleTransformException exception ) {
 			return null;
 		}
