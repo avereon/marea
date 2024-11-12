@@ -80,7 +80,7 @@ public class FxRenderer2dTest {
 		FxRenderer2d.logEnabled = true;
 		renderer.setViewpoint( 2, 2 );
 
-		assertThat( renderer.getWorldTransform().transform( 2, 2 ) ).isEqualTo( new Point2D( 72, 72 ) );
+		assertThat( renderer.getWorldToScreenTransform().transform( 2, 2 ) ).isEqualTo( new Point2D( 72, 72 ) );
 
 		// The viewpoint should be in the center of the node
 		assertThat( renderer.localToParent( 2, 2 ) ).isEqualTo( new Point2D( 72, 72 ) );

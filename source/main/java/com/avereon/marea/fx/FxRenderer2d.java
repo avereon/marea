@@ -55,9 +55,11 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 
 	private final Affine screenTransform = new Affine();
 
-	private Affine worldTransform = new Affine( Transform.scale( 1, -1 ) );
+	private Affine worldToScreenTransform = new Affine( Transform.scale( 1, -1 ) );
 
-	private Affine worldTextTransform = new Affine( Transform.scale( 1, 1 ) );
+	private Affine screenToWorldTransform = new Affine( Transform.scale( 1, -1 ) );
+
+	private Affine worldToScreenTextTransform = new Affine( Transform.scale( 1, 1 ) );
 
 	// Properties ---------------------------------------------------------------
 
@@ -373,50 +375,54 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		zoomYProperty().set( zoomY );
 	}
 
-	public Affine getWorldTransform() {
-		return worldTransform;
+	/**
+	 * Get a copy of the world to screen transform.
+	 *
+	 * @return A copy of the world to screen transform;
+	 */
+	@Override
+	public Affine getWorldToScreenTransform() {
+		return worldToScreenTransform.clone();
 	}
 
 	@Override
 	public Point2D localToParent( double x, double y ) {
-		return worldTransform.transform( x, y );
+		return worldToScreenTransform.transform( x, y );
 	}
 
 	@Override
 	public Point3D localToParent( double x, double y, double z ) {
-		return worldTransform.transform( x, y, z );
+		return worldToScreenTransform.transform( x, y, z );
 	}
 
 	@Override
 	public Point3D localToParent( Point3D point ) {
-		return worldTransform.transform( point );
+		return worldToScreenTransform.transform( point );
+	}
+
+	/**
+	 * Get a copy of the screen to world transform.
+	 *
+	 * @return A copy of the screen to world transform.
+	 */
+	@Override
+	public Affine getScreenToWorldTransform() {
+		return screenToWorldTransform.clone();
 	}
 
 	@Override
 	public Point2D parentToLocal( double x, double y ) {
-		try {
-			return worldTransform.inverseTransform( x, y );
-		} catch( NonInvertibleTransformException exception ) {
-			return null;
-		}
+		return screenToWorldTransform.transform( x, y );
 	}
 
 	@Override
 	public Point3D parentToLocal( double x, double y, double z ) {
-		try {
-			return worldTransform.inverseTransform( x, y, z );
-		} catch( NonInvertibleTransformException exception ) {
-			return null;
-		}
+		return screenToWorldTransform.transform( x, y, z );
 	}
 
 	@Override
 	public Point3D parentToLocal( Point3D point ) {
-		try {
-			return worldTransform.inverseTransform( point );
-		} catch( NonInvertibleTransformException exception ) {
-			return null;
-		}
+		return screenToWorldTransform.transform( point );
 	}
 
 	public void setDrawPen( Pen pen ) {
@@ -787,12 +793,18 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 		if( font == null ) font = new Font();
 		getGraphicsContext2D().setFont( Font.toFxFont( font.derive( height * FONT_POINT_SIZE ) ) );
 		double[] anchor = Vector.scale( x, y, FONT_POINT_SIZE, -FONT_POINT_SIZE );
-		getGraphicsContext2D().setTransform( rotate( worldTextTransform, -rotate, anchor[ 0 ], anchor[ 1 ] ) );
+		getGraphicsContext2D().setTransform( rotate( worldToScreenTextTransform, -rotate, anchor[ 0 ], anchor[ 1 ] ) );
 	}
 
 	private void updateWorldTransforms( RenderUnit unit, double dpiX, double dpiY, double zoomX, double zoomY, double viewpointX, double viewpointY, double rotate, double width, double height ) {
-		worldTransform = createWorldTransform( unit, dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, rotate, width, height, false );
-		worldTextTransform = createWorldTransform( unit, dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, rotate, width, height, true );
+		worldToScreenTransform = createWorldTransform( unit, dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, rotate, width, height, false );
+		worldToScreenTextTransform = createWorldTransform( unit, dpiX, dpiY, zoomX, zoomY, viewpointX, viewpointY, rotate, width, height, true );
+
+		try {
+			screenToWorldTransform = worldToScreenTransform.createInverse();
+		}catch( NonInvertibleTransformException exception ) {
+			screenToWorldTransform = null;
+		}
 	}
 
 	public static boolean logEnabled = false;
@@ -866,11 +878,11 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	}
 
 	private void shapeSetup() {
-		getGraphicsContext2D().setTransform( worldTransform );
+		getGraphicsContext2D().setTransform( worldToScreenTransform );
 	}
 
 	private void shapeSetup( double x, double y, double rotate ) {
-		getGraphicsContext2D().setTransform( rotate( worldTransform, rotate, x, y ) );
+		getGraphicsContext2D().setTransform( rotate( worldToScreenTransform, rotate, x, y ) );
 	}
 
 	@Deprecated
