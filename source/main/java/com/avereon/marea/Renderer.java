@@ -4,7 +4,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import javafx.scene.transform.Affine;
+import javafx.scene.transform.Transform;
 
 /**
  * The interface that all raster renderers must implement.
@@ -368,7 +368,7 @@ public interface Renderer {
 	 */
 	void drawVRule( double position, Pen pen );
 
-	Affine getWorldToScreenTransform();
+	Transform getWorldToScreenTransform();
 
 	/**
 	 * Convert an x, y point in local coordinates to a Point2D in parent
@@ -424,7 +424,7 @@ public interface Renderer {
 		return localToParent( point.getX(), point.getY(), 0 );
 	}
 
-	Affine getScreenToWorldTransform();
+	Transform getScreenToWorldTransform();
 
 	/**
 	 * Convert an x, y point in parent coordinates to local coordinates.

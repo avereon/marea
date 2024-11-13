@@ -381,7 +381,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	 * @return A copy of the world to screen transform;
 	 */
 	@Override
-	public Affine getWorldToScreenTransform() {
+	public Transform getWorldToScreenTransform() {
 		return worldToScreenTransform.clone();
 	}
 
@@ -406,7 +406,7 @@ public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRende
 	 * @return A copy of the screen to world transform.
 	 */
 	@Override
-	public Affine getScreenToWorldTransform() {
+	public Transform getScreenToWorldTransform() {
 		return screenToWorldTransform.clone();
 	}
 
