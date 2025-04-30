@@ -11,7 +11,7 @@ module com.avereon.marea {
 	requires javafx.base;
 	requires javafx.graphics;
 	requires javafx.controls;
-	requires com.avereon.zarra;
+	requires com.avereon.zerra;
 
 	//requires org.assertj.core;
 	//requires org.junit.jupiter.api;
@@ -25,5 +25,4 @@ module com.avereon.marea {
 	exports com.avereon.marea.geom;
 	opens com.avereon.marea.geom to javafx.graphics;
 	exports com.avereon.marea.fx;
-
 }

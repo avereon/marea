@@ -1,6 +1,6 @@
 package com.avereon.marea;
 
-import com.avereon.zarra.font.FontUtil;
+import com.avereon.zerra.font.FontUtil;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import lombok.Getter;
