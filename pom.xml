@@ -43,7 +43,7 @@
 		<project-timestamp>${maven.build.timestamp}</project-timestamp>
 
 		<!-- Keep consistent with the CI pipeline -->
-		<java.version>21</java.version>
+		<java.version>22</java.version>
 
 		<!-- Version numbers updated 07 Mar 2023 -->
 		<!-- Runtime dependencies -->
