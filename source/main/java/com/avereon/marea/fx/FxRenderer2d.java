@@ -32,7 +32,7 @@ import java.util.List;
 @CustomLog
 public class FxRenderer2d extends Canvas implements DirectRenderer2d, ShapeRenderer2d {
 
-	public static final RenderUnit DEFAULT_LENGTH_UNIT = RenderUnit.CENTIMETER;
+	public static final RenderUnit DEFAULT_LENGTH_UNIT = RenderUnit.CM;
 
 	public static final double DEFAULT_DPI = 72.0;
 

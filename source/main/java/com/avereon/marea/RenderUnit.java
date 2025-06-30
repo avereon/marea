@@ -2,15 +2,15 @@ package com.avereon.marea;
 
 public enum RenderUnit {
 	// Imperial units
-	INCH( 1 ),
-	FOOT( 12 ),
-	MILE( 5280 * 12 ),
+	IN( 1 ),
+	FT( 12 ),
+	MI( 5280 * 12 ),
 
 	// Metric units
-	METER( 1 / 0.0254 ),
-	CENTIMETER( 0.01 * METER.conversion ),
-	MILLIMETER( 0.001 * METER.conversion ),
-	KILOMETER( 1000 * METER.conversion );
+	M( 1 / 0.0254 ),
+	CM( 0.01 * M.conversion ),
+	MM( 0.001 * M.conversion ),
+	KM( 1000 * M.conversion );
 
 	private final double conversion;
 

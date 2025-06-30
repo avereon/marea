@@ -22,7 +22,7 @@ public class FxRenderer2dTest {
 		FxRenderer2d.logEnabled = true;
 		renderer = new FxRenderer2d();
 		// These unit tests are simpler using the INCH length unit
-		renderer.setLengthUnit( RenderUnit.INCH );
+		renderer.setLengthUnit( RenderUnit.IN );
 		renderer.setSize( 144, 144 );
 	}
 
@@ -56,7 +56,7 @@ public class FxRenderer2dTest {
 
 	@Test
 	void testLengthUnitChangeUpdatesWorldTransform() {
-		renderer.setLengthUnit( RenderUnit.CENTIMETER );
+		renderer.setLengthUnit( RenderUnit.CM );
 		assertThat( renderer.localToParent( 0, 0 ) ).isEqualTo( new Point2D( 72, 72 ) );
 		Point2DAssert.assertThat( renderer.localToParent( 2.54, 2.54 ) ).isCloseTo( new Point2D( 144, 0 ) );
 	}
