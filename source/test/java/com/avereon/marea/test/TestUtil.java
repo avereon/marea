@@ -4,7 +4,7 @@ import com.avereon.curve.math.Arithmetic;
 import javafx.geometry.Point3D;
 import org.assertj.core.data.Offset;
 
-import static com.avereon.curve.math.Arithmetic.DEFAULT_DIGITS;
+import static com.avereon.curve.math.Arithmetic.DEFAULT_PRECISION_DIGITS;
 
 public class TestUtil {
 
@@ -18,7 +18,7 @@ public class TestUtil {
 
 	public static final Offset<Double> TOLERANCE = Offset.offset( Arithmetic.DEFAULT_PRECISION );
 
-	public static final Offset<Double> LOOSE_TOLERANCE = Offset.offset( 1.0 / Math.pow( 10, 0.5 * DEFAULT_DIGITS ) );
+	public static final Offset<Double> LOOSE_TOLERANCE = Offset.offset( 1.0 / Math.pow( 10, 0.5 * DEFAULT_PRECISION_DIGITS ) );
 
 	public static double distance( double x1, double y1, double x2, double y2 ) {
 		double dx = x2 - x1;
